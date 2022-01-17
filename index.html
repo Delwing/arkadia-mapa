@@ -3,19 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mapa Arkadii</title>
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-    <script src="data/current.js"></script>
-    <script src="data/mapExport.js"></script>
-    <script src="data/colors.js"></script>
-    <script src="js/paper-full.min.js"></script>
-    <script src="js/jquery.js"></script>
-    <script src="js/jquery-mousewheel.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/jquery-localization.min.js"></script>
-    <script src="js/translations.js"></script>
-    <script src="js/popper.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/script.js"></script>
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico"/>
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/translations.css" rel="stylesheet" type="text/css">
     <link href="css/style.css" rel="stylesheet" type="text/css">
@@ -110,8 +98,22 @@
                         <input class="form-control" type="number" id="location-size" name="roomSize">
                     </div>
                     <div class="form-group">
-                        <label for="grid-size">Wielkość siatki</label>
-                        <input class="form-control" type="number" id="grid-size" name="baseSize">
+                        <label for="exits-size">Grubość linii</label>
+                        <input class="form-control" type="number" id="exits-size" name="exitsSize">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="uniformLevelSize" value="1" id="uniformLevelSize">
+                            <label class="form-check-label" for="uniformLevelSize">
+                                Jednakowa wielkość poziomów strefy
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="keepZoomLevel" value="1" id="keepZoomLevel">
+                            <label class="form-check-label" for="keepZoomLevel">
+                                Zachowuj poziom przybliżenia
+                            </label>
+                        </div>
                     </div>
                     <div class="form-group">
                         <div class="form-check">
@@ -127,7 +129,7 @@
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="round" value="1" id="round-check">
+                            <input class="form-check-input" type="checkbox" name="isRound" value="1" id="round-check">
                             <label class="form-check-label" for="round-check">
                                 Okrągłe lokacje
                             </label>
@@ -145,7 +147,10 @@
                             </label>
                         </div>
                     </div>
-
+                    <div class="form-group">
+                        <label for="map-background" class="form-label">Tło mapy</label>
+                        <input type="color" class="form-control form-control-color" id="mapBackground" name="mapBackground" value="#000000" title="Wybierz kolor tła">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Zapisz</button>
@@ -166,8 +171,6 @@
             </div>
             <div class="modal-body">
                 <p><kbd>F1</kbd> - <span>ta pomoc</span></p>
-                <p><kbd>Ctrl + S</kbd> - <span>zapisz obraz</span></p>
-                <p><kbd>Ctrl + C</kbd> - <span>kopiowanie obrazka do schowka</span></p>
                 <p><kbd>Ctrl + F</kbd> - <span>wyszukiwaie</span></p>
                 <p></p>
                 <p><kbd>+</kbd> - <span>przybliżenie</span></p>
@@ -223,6 +226,14 @@
         </div>
     </div>
     <canvas id="map" resize="true"></canvas>
+    <script src="data/mapExport.js"></script>
+    <script src="data/colors.js"></script>
+    <script src="data/current.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-localization.min.js"></script>
+    <script src="js/translations.js"></script>
+    <script src="dist/bundle.js"></script>
 </div>
 </body>
 </html>
