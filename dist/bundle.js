@@ -160,6 +160,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "renderArea",
     value: function renderArea(areaId, zIndex) {
+      jQuery("body").css("background", this.settings.mapBackground);
       var area = this.reader.getArea(areaId, zIndex);
 
       if (this.renderer) {
@@ -5865,12 +5866,7 @@ class Controls {
         toolPan.activate();
         toolPan.onMouseDrag = (event) => {
             this.element.style.cursor = "all-scroll";
-            // let bounds = this.renderer.getBounds();
-            // let viewBounds = this.view.getBounds();
             let delta = event.downPoint.subtract(event.point);
-            // if (viewBounds.x < bounds.x) {
-            //     this.view.translate(delta);
-            // }
             this.view.translate(delta.negate());
             this.isDrag = true;
         };
@@ -5958,6 +5954,7 @@ class Settings {
         this.uniformLevelSize = false;
         this.fontFamily = 'sans-serif';
         this.mapBackground = "#000000";
+        this.transparentLabels = false;
     }
 }
 
@@ -6455,7 +6452,9 @@ class Renderer {
             label.scale(this.roomFactor * 0.08, -this.roomFactor * 0.08);
         } else {
             let background = new paper.Path.Rectangle(new paper.Point(value.X, value.Y - value.Height), new paper.Size(value.Width, value.Height));
-            background.fillColor = new paper.Color(value.BgColor.r / 255, value.BgColor.g / 255, value.BgColor.b / 255);
+            if (!this.settings.transparentLabels) {
+                background.fillColor = new paper.Color(value.BgColor.r / 255, value.BgColor.g / 255, value.BgColor.b / 255);
+            }
             let text = new paper.PointText(background.bounds.center.add(0, 0.15));
             text.fillColor = new paper.Color(value.FgColor.r / 255, value.FgColor.g / 255, value.FgColor.b / 255);
             text.fontSize = 0.75;
