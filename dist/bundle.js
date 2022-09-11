@@ -572,9 +572,11 @@ var zIndex = 0;
 
 if (params.loc) {
   controls.findRoom(params.loc);
+  history.replaceState(null, null, url);
 } else {
   if (params.area) {
     area = params.area;
+    history.replaceState(null, null, url);
   } else if (position !== null && position.area) {
     area = position.area;
     zIndex = position.zIndex;
