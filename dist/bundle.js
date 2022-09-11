@@ -166,7 +166,8 @@ var PageControls = /*#__PURE__*/function () {
     key: "renderArea",
     value: function renderArea(areaId, zIndex) {
       localStorage.setItem("position", JSON.stringify({
-        area: areaId
+        area: areaId,
+        zIndex: zIndex
       }));
       jQuery("body").css("background", this.settings.mapBackground);
       var area = this.reader.getArea(areaId, zIndex);
@@ -562,17 +563,22 @@ var PageControls = /*#__PURE__*/function () {
 var controls = new PageControls(new _mudletMapRenderer.MapReader(mapData, colors));
 controls.genericSetup();
 controls.populateSelectBox();
-var area;
+var area = 37;
+var zIndex = 0;
 
-if (params.area) {
-  area = params.area;
-} else if (position !== null && position.area) {
-  area = position.area;
+if (params.loc) {
+  controls.findRoom(params.loc);
 } else {
-  area = 37;
+  if (params.area) {
+    area = params.area;
+  } else if (position !== null && position.area) {
+    area = position.area;
+    zIndex = position.zIndex;
+  }
+
+  controls.renderArea(area, zIndex);
 }
 
-controls.renderArea(area, 0);
 controls.registerKeyBoard();
 var dirs = {
   north: "n",
