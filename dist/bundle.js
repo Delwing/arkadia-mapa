@@ -17,6 +17,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
+var url = window.location.origin + window.location.pathname;
 var plDirs = {
   north: "polnoc",
   south: "poludnie",
@@ -336,6 +337,7 @@ var PageControls = /*#__PURE__*/function () {
     value: function showRoomInfo(room) {
       this.infoBox.toggle(true);
       this.infoBox.find(".room-id").html(room.id);
+      this.infoBox.find(".room-link").attr("href", "".concat(url, "?loc=").concat(room.id));
       this.infoBox.find(".room-name").html(room.name);
       this.infoBox.find(".room-env").html(room.env);
       this.infoBox.find(".coord-x").html(room.x);
@@ -358,6 +360,8 @@ var PageControls = /*#__PURE__*/function () {
         show = true;
         containerList.append("<li>" + userDataKey + ":<br>&nbsp; &nbsp; &nbsp;" + userData[userDataKey] + "</li>");
       }
+
+      container.toggle(show);
     }
   }, {
     key: "infoExitsGroup",
