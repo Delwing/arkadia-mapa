@@ -18,6 +18,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
+var roomNpc = {};
+Object.keys(arkadia_npc).forEach(function (name) {
+  if (!roomNpc[arkadia_npc[name]]) {
+    roomNpc[arkadia_npc[name]] = [];
+  }
+
+  roomNpc[arkadia_npc[name]].push(name);
+});
 var plDirs = {
   north: "polnoc",
   south: "poludnie",
@@ -348,6 +356,7 @@ var PageControls = /*#__PURE__*/function () {
       this.infoExitsGroup(this.infoBox.find(".exits"), room.exits);
       this.infoExitsGroup(this.infoBox.find(".special"), room.specialExits);
       this.userDataGroup(this.infoBox.find(".userData"), room.userData);
+      this.npcDataGroup(this.infoBox.find(".npc"), roomNpc[room.id] || {});
     }
   }, {
     key: "userDataGroup",
@@ -373,6 +382,20 @@ var PageControls = /*#__PURE__*/function () {
       for (var exit in exits) {
         show = true;
         containerList.append(this.infoExit(exit, exits[exit]));
+      }
+
+      container.toggle(show);
+    }
+  }, {
+    key: "npcDataGroup",
+    value: function npcDataGroup(container, npcs) {
+      var containerList = container.find("ul");
+      containerList.html("");
+      var show = false;
+
+      for (var npc in npcs) {
+        show = true;
+        containerList.append("<li>".concat(npcs[npc], "</li>"));
       }
 
       container.toggle(show);
