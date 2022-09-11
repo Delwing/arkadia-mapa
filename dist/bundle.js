@@ -29,6 +29,11 @@ var plDirs = {
   up: "gora",
   down: "dol"
 };
+var position = localStorage.getItem("position");
+
+if (position) {
+  position = JSON.parse(position);
+}
 
 var PageControls = /*#__PURE__*/function () {
   function PageControls(reader) {
@@ -36,20 +41,20 @@ var PageControls = /*#__PURE__*/function () {
 
     _classCallCheck(this, PageControls);
 
-    this.map = jQuery("#map");
-    this.map.on("roomSelected", function (event) {
+    this.map = document.querySelector("#map");
+    this.map.addEventListener("roomSelected", function (event) {
       return _this.selectRoom(event.detail);
     });
-    this.map.on("roomDeselected", function () {
+    this.map.addEventListener("roomDeselected", function () {
       return _this.deselectRoom();
     });
-    this.map.on("zoom", function (event) {
+    this.map.addEventListener("zoom", function (event) {
       return _this.adjustZoomBar(event.detail);
     });
-    this.map.on("zoom", function (event) {
+    this.map.addEventListener("zoom", function (event) {
       return _this.zoom = event.detail.zoom;
     });
-    this.map.on("goToArea", function (event) {
+    this.map.addEventListener("goToArea", function (event) {
       return setTimeout(function () {
         return _this.findRoom(event.detail.id);
       });
@@ -58,7 +63,7 @@ var PageControls = /*#__PURE__*/function () {
     this.select = jQuery("#area");
     this.infoBox = jQuery(".info-box");
     this.levels = jQuery(".levels");
-    this.saveImageButton = jQuery(".save-image");
+    this.saveImageButton = document.querySelector(".save-image");
     this.copyImageButton = jQuery(".copy-image");
     this.zoomButton = jQuery(".zoom-controls .btn");
     this.toastContainer = jQuery(".toast");
@@ -85,7 +90,7 @@ var PageControls = /*#__PURE__*/function () {
 
       _this.renderArea(_this.select.val(), zIndex);
     });
-    this.saveImageButton.on("click", function () {
+    this.saveImageButton.addEventListener("click", function () {
       return _this.saveImage();
     });
     this.copyImageButton.on("click", function () {
@@ -160,6 +165,9 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "renderArea",
     value: function renderArea(areaId, zIndex) {
+      localStorage.setItem("position", JSON.stringify({
+        area: areaId
+      }));
       jQuery("body").css("background", this.settings.mapBackground);
       var area = this.reader.getArea(areaId, zIndex);
 
@@ -414,7 +422,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "saveImage",
     value: function saveImage() {
-      var a = jQuery("<a>").attr("href", this.map[0].toDataURL()).attr("download", this.renderer.area.areaName + ".png").appendTo("body");
+      var a = jQuery("<a>").attr("href", this.map.toDataURL()).attr("download", this.renderer.area.areaName + ".png").appendTo("body");
       a[0].click();
       a.remove();
     }
@@ -558,10 +566,10 @@ var area;
 
 if (params.area) {
   area = params.area;
-} else if (typeof position !== "undefined" && position.area) {
+} else if (position !== null && position.area) {
   area = position.area;
 } else {
-  area = 1;
+  area = 37;
 }
 
 controls.renderArea(area, 0);
