@@ -9390,7 +9390,7 @@ class Renderer {
         }
 
         for (let dir in room.customLines) {
-            this.renderCustomLine(room, dir);
+            this.renderCustomLine(room, dir, room.exits[dir] ?? room.specialExits[dir]);
         }
 
         for (let dir in room.stubs) {
@@ -9476,6 +9476,7 @@ class Renderer {
             path.strokeColor = this.settings.linesColor;
             path.scale(1, exitPoint);
             path.rotate(180, exitPoint);
+            path.registerClick(() => this.emitter.dispatchEvent(new CustomEvent("areaArrowClick", { detail: targetId })));
         }
 
         room.exitsRenders.push(path);
@@ -9487,7 +9488,7 @@ class Renderer {
         return path;
     }
 
-    renderCustomLine(room, dir) {
+    renderCustomLine(room, dir, targetId) {
         if (room.customLines[dir].points !== undefined && room.customLines[dir].points.length === 0) {
             return;
         }
@@ -9545,6 +9546,12 @@ class Renderer {
 
         path.strokeWidth = this.exitFactor;
         path.orgStrokeColor = path.strokeColor;
+
+        let targetRoom = this.area.getRoomById(targetId);
+        if (!targetRoom) {
+            customLine.pointerReactor(this.element)
+            customLine.registerClick(() => this.emitter.dispatchEvent(new CustomEvent("areaArrowClick", { detail: targetId })));
+        }
 
         room.exitsRenders.push(customLine);
 
