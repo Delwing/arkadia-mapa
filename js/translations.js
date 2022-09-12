@@ -8,11 +8,8 @@ jQuery(function () {
             'Mapa Arkadii': {
                 'en_GB': 'Map Reader',
             },
-            'Kopiuj obraz': {
-                'en_GB': 'Copy image',
-            },
-            'Zapisz obraz': {
-                'en_GB': 'Save image',
+            'Kopiuj': {
+                'en_GB': 'Copy',
             },
             'Szukaj': {
                 'en_GB': 'Search',
@@ -26,8 +23,14 @@ jQuery(function () {
             'Wielkość lokacji': {
                 'en_GB': 'Location size',
             },
-            'Wielkość siatki': {
-                'en_GB': 'Grid size',
+            'Grubość linii': {
+                'en_GB': 'Line thickness',
+            },
+            'Jednakowa wielkość poziomów strefy': {
+                'en_GB': 'Uniform area level size',
+            },
+            'Zachowuj poziom przybliżenia': {
+                'en_GB': 'Keep zoom level',
             },
             'Krawędzie lokacji': {
                 'en_GB': 'Location borders',
@@ -86,6 +89,9 @@ jQuery(function () {
             'ID Lokacji': {
                 'en_GB': 'Location ID',
             },
+            'Numer lokacji lub pełne imię adresata paczki:' : {
+                'en_GB': 'Location number or full name of package recipient',
+            },
             'Nazwa': {
                 'en_GB': 'Name',
             },
@@ -130,11 +136,17 @@ jQuery(function () {
             },
             "dol" : {
                 'en_GB' : "down"
+            },
+            "Tło mapy" : {
+                'en_GB' : "Background"
+            },
+            "Przezroczyste tło etykiet" : {
+                'en_GB' : "Transparent labels background"
             }
         }
     });
 
-    let savedLanguage = localStorage.getItem("lang");
+    let savedLanguage = localStorage.getItem("lang") ?? 'pl_PL';
     if (savedLanguage) {
         translatePage(savedLanguage);
     }
