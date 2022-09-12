@@ -4,6 +4,8 @@
 
 var https = require("https");
 
+var npcs = {};
+
 var downloadNpc = function downloadNpc() {
   return new Promise(function (resolve, reject) {
     https.get("https://delwing.github.io/arkadia-mapa/data/npc.json", function (res) {
@@ -16,14 +18,22 @@ var downloadNpc = function downloadNpc() {
       });
       res.on("end", function () {
         var response = JSON.parse(Buffer.concat(data).toString());
+        npcs = response;
         resolve(response);
       });
     });
   });
 };
 
+var findNpc = function findNpc(name) {
+  var _npcs$name;
+
+  return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
+};
+
 module.exports = {
-  downloadNpc: downloadNpc
+  downloadNpc: downloadNpc,
+  findNpc: findNpc
 };
 
 }).call(this)}).call(this,require("buffer").Buffer)
@@ -324,7 +334,13 @@ var PageControls = /*#__PURE__*/function () {
       });
 
       if (formData.roomId !== undefined) {
-        this.findRoom(parseInt(formData.roomId));
+        var roomId = formData.roomId;
+
+        if (isNaN(roomId)) {
+          roomId = (0, _functions.findNpc)(roomId);
+        }
+
+        this.findRoom(parseInt(roomId));
       }
     }
   }, {
