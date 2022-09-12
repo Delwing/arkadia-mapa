@@ -9549,8 +9549,7 @@ class Renderer {
 
         let targetRoom = this.area.getRoomById(targetId);
         if (!targetRoom) {
-            customLine.pointerReactor(this.element)
-            customLine.registerClick(() => this.emitter.dispatchEvent(new CustomEvent("areaArrowClick", { detail: targetId })));
+            path.registerClick(() => this.emitter.dispatchEvent(new CustomEvent("areaArrowClick", { detail: targetId })));
         }
 
         room.exitsRenders.push(customLine);
