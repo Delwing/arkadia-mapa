@@ -561,12 +561,6 @@ var PageControls = /*#__PURE__*/function () {
           _this3.showHelp();
         }
 
-        if (directionKeys.hasOwnProperty(event.code)) {
-          _this3.goDirection(directionKeys[event.code]);
-
-          event.preventDefault();
-        }
-
         if (event.ctrlKey && event.code === "KeyF") {
           event.preventDefault();
 
@@ -574,7 +568,7 @@ var PageControls = /*#__PURE__*/function () {
         }
       });
       window.addEventListener("keydown", function (event) {
-        if (jQuery("input").is(":focus")) {
+        if (jQuery("input").is(":focus") || _this3.settings.disableKeyBinds) {
           return;
         }
 
@@ -616,6 +610,12 @@ var PageControls = /*#__PURE__*/function () {
 
         if (event.code === "ArrowRight") {
           _this3.move(1, 0);
+
+          event.preventDefault();
+        }
+
+        if (directionKeys.hasOwnProperty(event.code)) {
+          _this3.goDirection(directionKeys[event.code]);
 
           event.preventDefault();
         }
