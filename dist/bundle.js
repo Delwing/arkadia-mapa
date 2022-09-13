@@ -17,14 +17,12 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
-function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
-
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
 var roomNpc = {};
 (0, _npc.downloadNpc)().then(function (value) {
-  return value, _readOnlyError("roomNpc");
+  return roomNpc = value;
 });
 var plDirs = {
   north: "polnoc",
@@ -32942,6 +32940,7 @@ function extend() {
 var https = require("https");
 
 var npcs = {};
+var roomNpc = {};
 
 var downloadNpc = function downloadNpc() {
   return new Promise(function (resolve, reject) {
@@ -32963,7 +32962,7 @@ var downloadNpc = function downloadNpc() {
           roomNpc[npc.loc].push(npc.name);
           npcs[npc.name] = npc.loc;
         });
-        resolve(response);
+        resolve(roomNpc);
       });
     });
   });
