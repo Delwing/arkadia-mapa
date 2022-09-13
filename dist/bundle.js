@@ -1,48 +1,9 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-(function (Buffer){(function (){
-"use strict";
-
-var https = require("https");
-
-var npcs = {};
-
-var downloadNpc = function downloadNpc() {
-  return new Promise(function (resolve, reject) {
-    https.get("https://delwing.github.io/arkadia-mapa/data/npc.json", function (res) {
-      var data = [];
-      res.on("data", function (chunk) {
-        data.push(chunk);
-      });
-      res.on("error", function (err) {
-        return reject(err);
-      });
-      res.on("end", function () {
-        var response = JSON.parse(Buffer.concat(data).toString());
-        npcs = response;
-        resolve(response);
-      });
-    });
-  });
-};
-
-var findNpc = function findNpc(name) {
-  var _npcs$name;
-
-  return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
-};
-
-module.exports = {
-  downloadNpc: downloadNpc,
-  findNpc: findNpc
-};
-
-}).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":7,"https":10}],2:[function(require,module,exports){
 "use strict";
 
 var _mudletMapRenderer = require("mudlet-map-renderer");
 
-var _functions = require("./functions");
+var _npc = require("./npc");
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -56,18 +17,14 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
+function _readOnlyError(name) { throw new TypeError("\"" + name + "\" is read-only"); }
+
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
 var roomNpc = {};
-(0, _functions.downloadNpc)().then(function (value) {
-  Object.keys(value).forEach(function (name) {
-    if (!roomNpc[value[name]]) {
-      roomNpc[value[name]] = [];
-    }
-
-    roomNpc[value[name]].push(name);
-  });
+(0, _npc.downloadNpc)().then(function (value) {
+  return value, _readOnlyError("roomNpc");
 });
 var plDirs = {
   north: "polnoc",
@@ -337,7 +294,7 @@ var PageControls = /*#__PURE__*/function () {
         var roomId = formData.roomId;
 
         if (isNaN(roomId)) {
-          roomId = (0, _functions.findNpc)(roomId);
+          roomId = (0, _npc.findNpc)(roomId);
         }
 
         this.findRoom(parseInt(roomId));
@@ -684,7 +641,7 @@ function dirsShortToLong(dir) {
   return result !== undefined ? result : dir;
 }
 
-},{"./functions":1,"mudlet-map-renderer":13}],3:[function(require,module,exports){
+},{"./npc":47,"mudlet-map-renderer":12}],2:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -5872,7 +5829,7 @@ function dirsShortToLong(dir) {
 
 })));
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -6024,9 +5981,9 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 (function (global){(function (){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -6563,7 +6520,7 @@ function fromByteArray (uint8) {
 }(this));
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 (function (Buffer){(function (){
 /*!
  * The buffer module from node.js, for the browser.
@@ -8344,7 +8301,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"base64-js":4,"buffer":7,"ieee754":11}],8:[function(require,module,exports){
+},{"base64-js":3,"buffer":6,"ieee754":10}],7:[function(require,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -8410,7 +8367,7 @@ module.exports = {
   "511": "Network Authentication Required"
 }
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -8909,7 +8866,7 @@ function eventTargetAgnosticAddListener(emitter, name, listener, flags) {
   }
 }
 
-},{}],10:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var http = require('http')
 var url = require('url')
 
@@ -8942,7 +8899,7 @@ function validateParams (params) {
   return params
 }
 
-},{"http":24,"url":44}],11:[function(require,module,exports){
+},{"http":23,"url":43}],10:[function(require,module,exports){
 /*! ieee754. BSD-3-Clause License. Feross Aboukhadijeh <https://feross.org/opensource> */
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
@@ -9029,7 +8986,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -9058,14 +9015,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
  module.exports = {
   Renderer: require("./map-fragment/draw/renderer").Renderer,
   Settings: require("./map-fragment/draw/renderer").Settings,
   MapReader: require("./map-fragment/reader/MapReader").MapReader,
 };
 
-},{"./map-fragment/draw/renderer":15,"./map-fragment/reader/MapReader":17}],14:[function(require,module,exports){
+},{"./map-fragment/draw/renderer":14,"./map-fragment/reader/MapReader":16}],13:[function(require,module,exports){
 const paper = require("paper");
 
 let selectionStyle = function (item) {
@@ -9203,7 +9160,7 @@ module.exports = {
     Controls: Controls,
 };
 
-},{"paper":18}],15:[function(require,module,exports){
+},{"paper":17}],14:[function(require,module,exports){
 const paper = require("paper");
 const MapReader = require("../reader/MapReader").MapReader;
 const Controls = require("./controls").Controls;
@@ -9936,7 +9893,7 @@ function dirLongToShort(dir) {
     return dirs[dir] !== undefined ? dirs[dir] : dir;
 }
 
-},{"../reader/MapReader":17,"./controls":14,"paper":18}],16:[function(require,module,exports){
+},{"../reader/MapReader":16,"./controls":13,"paper":17}],15:[function(require,module,exports){
 class Area {
     constructor(areaId, areaName, rooms, labels, zIndex, levels) {
         this.areaId = parseInt(areaId);
@@ -10012,7 +9969,7 @@ module.exports = {
     Area: Area,
 };
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 let Area = require("./Area").Area;
 
 class MapReader {
@@ -10103,7 +10060,7 @@ module.exports = {
     MapReader: MapReader,
 };
 
-},{"./Area":16}],18:[function(require,module,exports){
+},{"./Area":15}],17:[function(require,module,exports){
 /*!
  * Paper.js v0.12.15 - The Swiss Army Knife of Vector Graphics Scripting.
  * http://paperjs.org/
@@ -27564,7 +27521,7 @@ if (typeof define === 'function' && define.amd) {
 return paper;
 }.call(this, typeof self === 'object' ? self : null);
 
-},{"./node/extend.js":5,"./node/self.js":5,"acorn":3}],19:[function(require,module,exports){
+},{"./node/extend.js":4,"./node/self.js":4,"acorn":2}],18:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -27750,7 +27707,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],20:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27836,7 +27793,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],21:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -27923,13 +27880,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],22:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 exports.decode = exports.parse = require('./decode');
 exports.encode = exports.stringify = require('./encode');
 
-},{"./decode":20,"./encode":21}],23:[function(require,module,exports){
+},{"./decode":19,"./encode":20}],22:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -27996,7 +27953,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":7}],24:[function(require,module,exports){
+},{"buffer":6}],23:[function(require,module,exports){
 (function (global){(function (){
 var ClientRequest = require('./lib/request')
 var response = require('./lib/response')
@@ -28084,7 +28041,7 @@ http.METHODS = [
 	'UNSUBSCRIBE'
 ]
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/request":26,"./lib/response":27,"builtin-status-codes":8,"url":44,"xtend":47}],25:[function(require,module,exports){
+},{"./lib/request":25,"./lib/response":26,"builtin-status-codes":7,"url":43,"xtend":46}],24:[function(require,module,exports){
 (function (global){(function (){
 exports.fetch = isFunction(global.fetch) && isFunction(global.ReadableStream)
 
@@ -28147,7 +28104,7 @@ function isFunction (value) {
 xhr = null // Help gc
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 (function (process,global,Buffer){(function (){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -28503,7 +28460,7 @@ var unsafeHeaders = [
 ]
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":25,"./response":27,"_process":19,"buffer":7,"inherits":12,"readable-stream":42}],27:[function(require,module,exports){
+},{"./capability":24,"./response":26,"_process":18,"buffer":6,"inherits":11,"readable-stream":41}],26:[function(require,module,exports){
 (function (process,global,Buffer){(function (){
 var capability = require('./capability')
 var inherits = require('inherits')
@@ -28718,7 +28675,7 @@ IncomingMessage.prototype._onXHRProgress = function (resetTimers) {
 }
 
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("buffer").Buffer)
-},{"./capability":25,"_process":19,"buffer":7,"inherits":12,"readable-stream":42}],28:[function(require,module,exports){
+},{"./capability":24,"_process":18,"buffer":6,"inherits":11,"readable-stream":41}],27:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -28847,7 +28804,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (process){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -28989,7 +28946,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this)}).call(this,require('_process'))
-},{"./_stream_readable":31,"./_stream_writable":33,"_process":19,"inherits":12}],30:[function(require,module,exports){
+},{"./_stream_readable":30,"./_stream_writable":32,"_process":18,"inherits":11}],29:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29029,7 +28986,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":32,"inherits":12}],31:[function(require,module,exports){
+},{"./_stream_transform":31,"inherits":11}],30:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30156,7 +30113,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":28,"./_stream_duplex":29,"./internal/streams/async_iterator":34,"./internal/streams/buffer_list":35,"./internal/streams/destroy":36,"./internal/streams/from":38,"./internal/streams/state":40,"./internal/streams/stream":41,"_process":19,"buffer":7,"events":9,"inherits":12,"string_decoder/":43,"util":5}],32:[function(require,module,exports){
+},{"../errors":27,"./_stream_duplex":28,"./internal/streams/async_iterator":33,"./internal/streams/buffer_list":34,"./internal/streams/destroy":35,"./internal/streams/from":37,"./internal/streams/state":39,"./internal/streams/stream":40,"_process":18,"buffer":6,"events":8,"inherits":11,"string_decoder/":42,"util":4}],31:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30358,7 +30315,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":28,"./_stream_duplex":29,"inherits":12}],33:[function(require,module,exports){
+},{"../errors":27,"./_stream_duplex":28,"inherits":11}],32:[function(require,module,exports){
 (function (process,global){(function (){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -31058,7 +31015,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this)}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":28,"./_stream_duplex":29,"./internal/streams/destroy":36,"./internal/streams/state":40,"./internal/streams/stream":41,"_process":19,"buffer":7,"inherits":12,"util-deprecate":46}],34:[function(require,module,exports){
+},{"../errors":27,"./_stream_duplex":28,"./internal/streams/destroy":35,"./internal/streams/state":39,"./internal/streams/stream":40,"_process":18,"buffer":6,"inherits":11,"util-deprecate":45}],33:[function(require,module,exports){
 (function (process){(function (){
 'use strict';
 
@@ -31268,7 +31225,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this)}).call(this,require('_process'))
-},{"./end-of-stream":37,"_process":19}],35:[function(require,module,exports){
+},{"./end-of-stream":36,"_process":18}],34:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -31479,7 +31436,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":7,"util":5}],36:[function(require,module,exports){
+},{"buffer":6,"util":4}],35:[function(require,module,exports){
 (function (process){(function (){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -31587,7 +31544,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this)}).call(this,require('_process'))
-},{"_process":19}],37:[function(require,module,exports){
+},{"_process":18}],36:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -31692,12 +31649,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":28}],38:[function(require,module,exports){
+},{"../../../errors":27}],37:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -31795,7 +31752,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":28,"./end-of-stream":37}],40:[function(require,module,exports){
+},{"../../../errors":27,"./end-of-stream":36}],39:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -31823,10 +31780,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":28}],41:[function(require,module,exports){
+},{"../../../errors":27}],40:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":9}],42:[function(require,module,exports){
+},{"events":8}],41:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -31837,7 +31794,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":29,"./lib/_stream_passthrough.js":30,"./lib/_stream_readable.js":31,"./lib/_stream_transform.js":32,"./lib/_stream_writable.js":33,"./lib/internal/streams/end-of-stream.js":37,"./lib/internal/streams/pipeline.js":39}],43:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":28,"./lib/_stream_passthrough.js":29,"./lib/_stream_readable.js":30,"./lib/_stream_transform.js":31,"./lib/_stream_writable.js":32,"./lib/internal/streams/end-of-stream.js":36,"./lib/internal/streams/pipeline.js":38}],42:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -32134,7 +32091,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":23}],44:[function(require,module,exports){
+},{"safe-buffer":22}],43:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -32868,7 +32825,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":45,"punycode":6,"querystring":22}],45:[function(require,module,exports){
+},{"./util":44,"punycode":5,"querystring":21}],44:[function(require,module,exports){
 'use strict';
 
 module.exports = {
@@ -32886,7 +32843,7 @@ module.exports = {
   }
 };
 
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (global){(function (){
 
 /**
@@ -32957,7 +32914,7 @@ function config (name) {
 }
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],47:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = extend
 
 var hasOwnProperty = Object.prototype.hasOwnProperty;
@@ -32978,4 +32935,50 @@ function extend() {
     return target
 }
 
-},{}]},{},[2]);
+},{}],47:[function(require,module,exports){
+(function (Buffer){(function (){
+"use strict";
+
+var https = require("https");
+
+var npcs = {};
+
+var downloadNpc = function downloadNpc() {
+  return new Promise(function (resolve, reject) {
+    https.get("https://delwing.github.io/arkadia-mapa/data/npc.json", function (res) {
+      var data = [];
+      res.on("data", function (chunk) {
+        data.push(chunk);
+      });
+      res.on("error", function (err) {
+        return reject(err);
+      });
+      res.on("end", function () {
+        var response = JSON.parse(Buffer.concat(data).toString());
+        response.forEach(function (npc) {
+          if (!roomNpc[npc.loc]) {
+            roomNpc[npc.loc] = [];
+          }
+
+          roomNpc[npc.loc].push(npc.name);
+          npcs[npc.name] = npc.loc;
+        });
+        resolve(response);
+      });
+    });
+  });
+};
+
+var findNpc = function findNpc(name) {
+  var _npcs$name;
+
+  return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
+};
+
+module.exports = {
+  downloadNpc: downloadNpc,
+  findNpc: findNpc
+};
+
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"buffer":6,"https":9}]},{},[1]);
