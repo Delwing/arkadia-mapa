@@ -32977,6 +32977,7 @@ var findNpc = function findNpc(name) {
 jQuery('.advancedAutoComplete').autoComplete({
   minLength: 1,
   resolver: 'custom',
+  noResultsText: '',
   events: {
     search: function search(qry, callback) {
       if (isNaN(qry)) {
