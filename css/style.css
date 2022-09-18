@@ -6,7 +6,7 @@ html, body {
     height: 100%;
     width: 100%;
     margin: 0;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 body {
@@ -135,13 +135,14 @@ button.control span {
 }
 
 .progress-container {
-    position: relative;
+    position: absolute;
     height: 3px;
     margin-top: 2px;
     margin-bottom: -5px;
     z-index: 99;
     display: none;
     opacity: 0.5;
+    width: 100%;
 }
 
 .progress {
@@ -176,6 +177,9 @@ h2 a, h2 a:hover {
     min-width: auto;
 }
 
+.modal {
+    overflow-y: hidden !important;
+}
 
 
 @media all and (max-width: 1400px) {

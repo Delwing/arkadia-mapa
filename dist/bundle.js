@@ -32974,6 +32974,24 @@ var findNpc = function findNpc(name) {
   return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
 };
 
+jQuery('.advancedAutoComplete').autoComplete({
+  minLength: 1,
+  resolver: 'custom',
+  events: {
+    search: function search(qry, callback) {
+      if (isNaN(qry)) {
+        callback(Object.keys(npcs).filter(function (item) {
+          return item.match(qry);
+        }).map(function (item) {
+          return {
+            value: npcs[item],
+            text: item
+          };
+        }));
+      }
+    }
+  }
+});
 module.exports = {
   downloadNpc: downloadNpc,
   findNpc: findNpc

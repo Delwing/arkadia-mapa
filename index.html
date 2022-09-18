@@ -63,11 +63,6 @@
           </div>
     </div>
 </header>
-<div class="progress-container">
-    <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 50%;"></div>
-    </div>
-</div>
 <div class="modal fade" id="search" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -81,7 +76,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="search-id">Numer lokacji lub pełne imię adresata paczki:</label>
-                        <input class="form-control" type="text" id="search-id" name="roomId">
+                        <input class="form-control advancedAutoComplete" type="text" id="search-id" name="roomId"  data-url="myurl" autocomplete="off">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -223,6 +218,11 @@
     </button>
 </div>
 <div class="map-container">
+    <div class="progress-container">
+        <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 50%;"></div>
+        </div>
+    </div>
     <div class="info-box">
         <p><span>ID Lokacji</span>: <a class="room-link" href="#"><span class="room-id"></span></a></p>
         <p><span>Nazwa</span>: <span class="room-name"></span></p>
@@ -258,6 +258,7 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/jquery-localization.min.js"></script>
     <script src="js/translations.js"></script>
+    <script src="js/bootstrap-autocomplete.min.js"></script>
     <script src="dist/bundle.js"></script>
 </div>
 </body>
