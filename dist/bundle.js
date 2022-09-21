@@ -9101,7 +9101,7 @@ class Controls {
             this.view.translate(delta.negate());
             this.isDrag = true;
         };
-        toolPan.onMouseDown = () => {
+        toolPan.onMouseDown = (event) => {
             this.isDrag = false;
         };
         toolPan.onMouseUp = () => {
@@ -32974,7 +32974,9 @@ var findNpc = function findNpc(name) {
   return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
 };
 
-jQuery('.advancedAutoComplete').autoComplete({
+var searchNpcsField = jQuery('.advancedAutoComplete');
+var form = jQuery(".search-form");
+searchNpcsField.autoComplete({
   minLength: 1,
   resolver: 'custom',
   noResultsText: '',
