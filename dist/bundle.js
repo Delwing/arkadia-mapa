@@ -32993,6 +32993,9 @@ jQuery('.advancedAutoComplete').autoComplete({
     }
   }
 });
+searchNpcsField.on('autocomplete.select', function (evt, item) {
+  form.trigger("submit");
+});
 module.exports = {
   downloadNpc: downloadNpc,
   findNpc: findNpc

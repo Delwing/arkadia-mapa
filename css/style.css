@@ -181,6 +181,10 @@ h2 a, h2 a:hover {
     overflow-y: hidden !important;
 }
 
+.dropdown-item {
+    cursor: pointer;
+}
+
 
 @media all and (max-width: 1400px) {
     button.control span {
