@@ -32987,7 +32987,7 @@ searchNpcsField.autoComplete({
     search: function search(qry, callback) {
       if (isNaN(qry)) {
         var items = Object.keys(npcs).filter(function (item) {
-          return item.match(qry);
+          return item.toLowerCase().match(qry.toLowerCase());
         });
         var length = items.length;
         items = items.slice(0, maxItems);
@@ -33042,7 +33042,6 @@ searchNpcsField.on('autocomplete.select', function (evt, item) {
   if (item.value instanceof Function) {
     item.value();
     evt.preventDefault();
-  } else {//return form.submit();
   }
 });
 searchNpcsField.on('input', function (evt) {
