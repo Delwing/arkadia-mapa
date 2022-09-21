@@ -279,7 +279,7 @@ var PageControls = /*#__PURE__*/function () {
     }
   }, {
     key: "submitSearch",
-    value: function submitSearch() {
+    value: function submitSearch(event) {
       this.searchModal.modal("toggle");
       var inputs = this.search.find(":input");
       var formData = {};
@@ -32974,8 +32974,11 @@ var findNpc = function findNpc(name) {
   return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
 };
 
+var form = jQuery('.search-form');
 var searchNpcsField = jQuery('.advancedAutoComplete');
-var form = jQuery(".search-form");
+var defaultMaxItems = 10;
+var maxItems = defaultMaxItems;
+var shouldPreventSubmit = false;
 searchNpcsField.autoComplete({
   minLength: 1,
   resolver: 'custom',
@@ -32983,20 +32986,67 @@ searchNpcsField.autoComplete({
   events: {
     search: function search(qry, callback) {
       if (isNaN(qry)) {
-        callback(Object.keys(npcs).filter(function (item) {
+        var items = Object.keys(npcs).filter(function (item) {
           return item.match(qry);
-        }).map(function (item) {
+        });
+        var length = items.length;
+        items = items.slice(0, maxItems);
+        items.map(function (item) {
           return {
             value: npcs[item],
             text: item
           };
-        }));
+        });
+
+        if (length > maxItems) {
+          items.push({
+            value: function value(form) {
+              maxItems += 10;
+              searchNpcsField.val(qry);
+              shouldPreventSubmit = qry;
+              searchNpcsField.autoComplete('show');
+            },
+            text: "Więcej..."
+          });
+        }
+
+        callback(items);
       }
     }
   }
 });
+searchNpcsField.on('keydown', function (event) {
+  switch (event.which) {
+    case 13:
+      // ENTER
+      if (shouldPreventSubmit) {
+        event.preventDefault();
+      }
+
+      break;
+  }
+});
+searchNpcsField.on('keyup', function (event) {
+  switch (event.which) {
+    case 13:
+      // ENTER
+      if (shouldPreventSubmit) {
+        searchNpcsField.autoComplete('show');
+        shouldPreventSubmit = false;
+      }
+
+      break;
+  }
+});
 searchNpcsField.on('autocomplete.select', function (evt, item) {
-  form.trigger("submit");
+  if (item.value instanceof Function) {
+    item.value();
+    evt.preventDefault();
+  } else {//return form.submit();
+  }
+});
+searchNpcsField.on('input', function (evt) {
+  maxItems = defaultMaxItems;
 });
 module.exports = {
   downloadNpc: downloadNpc,
