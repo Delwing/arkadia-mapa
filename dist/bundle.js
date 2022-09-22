@@ -33184,6 +33184,7 @@ var Preview = /*#__PURE__*/function () {
 
           _this.preview.style.opacity = 0;
           _this.previewImgContainer.style.background = _this.controls.renderer.settings.mapBackground;
+          _this.previewImg.style.background = _this.controls.renderer.settings.mapBackground;
         }, 2);
       });
     }
