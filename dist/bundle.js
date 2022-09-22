@@ -219,9 +219,9 @@ var PageControls = /*#__PURE__*/function () {
           if (_this2.settings.keepZoomLevel && _this2.zoom) {
             _this2.renderer.controls.setZoom(_this2.zoom);
           }
+        } else {
+          resolve();
         }
-
-        resolve();
       });
     }
   }, {
@@ -33169,14 +33169,15 @@ var Preview = /*#__PURE__*/function () {
             _this.previewPanContainer.style.height = "".concat(_this.previewImg.height, "px");
 
             _this.update();
+
+            resolve();
           }, {
             once: true
           });
 
-          resolve();
           _this.preview.style.opacity = 0;
           _this.previewImg.style.background = _this.controls.renderer.settings.mapBackground;
-        }, 1);
+        }, 2);
       });
     }
   }, {
