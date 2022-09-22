@@ -32961,10 +32961,17 @@ var https = require("https");
 
 var npcs = {};
 var roomNpc = {};
+var searchField = jQuery("#search-id");
 
 var downloadNpc = function downloadNpc() {
   return new Promise(function (resolve, reject) {
-    https.get("https://delwing.github.io/arkadia-mapa/data/npc.json", function (res) {
+    var url = searchField.attr("data-npc");
+
+    if (!url) {
+      resolve([]);
+    }
+
+    https.get(url, function (res) {
       var data = [];
       res.on("data", function (chunk) {
         data.push(chunk);
@@ -32994,79 +33001,82 @@ var findNpc = function findNpc(name) {
   return (_npcs$name = npcs[name]) !== null && _npcs$name !== void 0 ? _npcs$name : false;
 };
 
-var form = jQuery('.search-form');
-var searchNpcsField = jQuery('.advancedAutoComplete');
-var defaultMaxItems = 10;
-var maxItems = defaultMaxItems;
-var shouldPreventSubmit = false;
-searchNpcsField.autoComplete({
-  minLength: 1,
-  resolver: 'custom',
-  noResultsText: '',
-  events: {
-    search: function search(qry, callback) {
-      if (isNaN(qry)) {
-        var items = Object.keys(npcs).filter(function (item) {
-          return item.toLowerCase().match(qry.toLowerCase());
-        });
-        var length = items.length;
-        items = items.slice(0, maxItems);
-        items.map(function (item) {
-          return {
-            value: npcs[item],
-            text: item
-          };
-        });
+var searchNpcsField = jQuery(".advancedAutoComplete");
 
-        if (length > maxItems) {
-          items.push({
-            value: function value(form) {
-              maxItems += 10;
-              searchNpcsField.val(qry);
-              shouldPreventSubmit = qry;
-              searchNpcsField.autoComplete('show');
-            },
-            text: "Więcej..."
+if (searchNpcsField && searchNpcsField.autoComplete) {
+  var defaultMaxItems = 10;
+  var maxItems = defaultMaxItems;
+  var shouldPreventSubmit = false;
+  searchNpcsField.autoComplete({
+    minLength: 1,
+    resolver: "custom",
+    noResultsText: "",
+    events: {
+      search: function search(qry, callback) {
+        if (isNaN(qry)) {
+          var items = Object.keys(npcs).filter(function (item) {
+            return item.toLowerCase().match(qry.toLowerCase());
           });
-        }
+          var length = items.length;
+          items = items.slice(0, maxItems);
+          items.map(function (item) {
+            return {
+              value: npcs[item],
+              text: item
+            };
+          });
 
-        callback(items);
+          if (length > maxItems) {
+            items.push({
+              value: function value(form) {
+                maxItems += 10;
+                searchNpcsField.val(qry);
+                shouldPreventSubmit = qry;
+                searchNpcsField.autoComplete("show");
+              },
+              text: "Więcej..."
+            });
+          }
+
+          callback(items);
+        }
       }
     }
-  }
-});
-searchNpcsField.on('keydown', function (event) {
-  switch (event.which) {
-    case 13:
-      // ENTER
-      if (shouldPreventSubmit) {
-        event.preventDefault();
-      }
+  });
+  searchNpcsField.on("keydown", function (event) {
+    switch (event.which) {
+      case 13:
+        // ENTER
+        if (shouldPreventSubmit) {
+          event.preventDefault();
+        }
 
-      break;
-  }
-});
-searchNpcsField.on('keyup', function (event) {
-  switch (event.which) {
-    case 13:
-      // ENTER
-      if (shouldPreventSubmit) {
-        searchNpcsField.autoComplete('show');
-        shouldPreventSubmit = false;
-      }
+        break;
+    }
+  });
+  searchNpcsField.on("keyup", function (event) {
+    switch (event.which) {
+      case 13:
+        // ENTER
+        if (shouldPreventSubmit) {
+          searchNpcsField.autoComplete("show");
+          shouldPreventSubmit = false;
+        }
 
-      break;
-  }
-});
-searchNpcsField.on('autocomplete.select', function (evt, item) {
-  if (item.value instanceof Function) {
-    item.value();
-    evt.preventDefault();
-  }
-});
-searchNpcsField.on('input', function (evt) {
-  maxItems = defaultMaxItems;
-});
+        break;
+    }
+  });
+  searchNpcsField.on("autocomplete.select", function (evt, item) {
+    if (item.value instanceof Function) {
+      item.value();
+      evt.preventDefault();
+    }
+  });
+  searchNpcsField.on("input", function (evt) {
+    maxItems = defaultMaxItems;
+  });
+}
+
 module.exports = {
   downloadNpc: downloadNpc,
   findNpc: findNpc
