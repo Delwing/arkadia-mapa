@@ -33129,6 +33129,7 @@ var Preview = /*#__PURE__*/function () {
 
     this.map = map;
     this.preview = document.querySelector(".preview-container");
+    this.previewImgContainer = document.querySelector(".preview");
     this.previewImg = document.querySelector(".preview-img");
     this.previewPanContainer = document.querySelector(".preview-pan-container");
     this.previewPan = document.querySelector(".preview-pan");
@@ -33159,8 +33160,14 @@ var Preview = /*#__PURE__*/function () {
         setTimeout(function () {
           var width = _this.view.size.width / _this.backgroundLayer.bounds.width;
           var height = _this.view.size.height / _this.backgroundLayer.bounds.height;
-          _this.previewImg.style.maxWidth = "".concat(width * 100, "%");
-          _this.previewImg.style.maxHeight = "".concat(height * 100, "%");
+
+          if (_this.view.size.width > _this.view.size.height) {
+            _this.previewImg.style.maxWidth = "".concat(width * 100, "%");
+            _this.previewImg.style.maxHeight = "".concat(1 * 100, "%");
+          } else {
+            _this.previewImg.style.maxWidth = "".concat(1 * 100, "%");
+            _this.previewImg.style.maxHeight = "".concat(height * 100, "%");
+          }
 
           _this.previewImg.setAttribute('src', _this.map.toDataURL());
 
@@ -33176,7 +33183,7 @@ var Preview = /*#__PURE__*/function () {
           });
 
           _this.preview.style.opacity = 0;
-          _this.previewImg.style.background = _this.controls.renderer.settings.mapBackground;
+          _this.previewImgContainer.style.background = _this.controls.renderer.settings.mapBackground;
         }, 2);
       });
     }
@@ -33189,7 +33196,7 @@ var Preview = /*#__PURE__*/function () {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function () {
         return _this2.preview.style.opacity = 0;
-      }, 5000);
+      }, 4000);
       var zoomFactor = this.view.minZoom / this.view.zoom;
       this.previewPan.style.width = "".concat(zoomFactor * 100, "%");
       this.previewPan.style.height = "".concat(zoomFactor * 100, "%");

@@ -187,15 +187,16 @@ h2 a, h2 a:hover {
     position: absolute;
     right: 10px;
     top: 100px;
-    width: 600px;
-    height: 600px;
-    max-width: 25%;
-    max-height: 25%;
+    width: 400px;
+    height: 400px;
     pointer-events: none; 
     overflow: hidden;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: center;
     background: rgba(0,0,0,0);
+    border: 1px solid pink;
+    backdrop-filter: blur(3px) brightness(60%);
 }
 
 .preview {
@@ -203,9 +204,12 @@ h2 a, h2 a:hover {
     display: flex; 
     flex-direction: column; 
     justify-content: center;
-    overflow: hidden;
+    align-items: center;
     background: rgba(0,0,0,0);
     backdrop-filter: blur(3px) brightness(120%);
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
 }
 
 .preview-pan {
@@ -218,14 +222,19 @@ h2 a, h2 a:hover {
 
 .preview-pan-container {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     z-index: 2;
-    overflow: hidden;
+    margin: auto;
+    top: 0;
+    bottom: 0;
 }
 
 .preview-img {
-    border: 1px solid rgba(92, 92, 92, 0.618);
+    position: absolute;
     backdrop-filter: blur(3px) brightness(60%);
-    opacity: 0.8;
 }
 
 @media all and (max-width: 1400px) {
