@@ -17,6 +17,9 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
 
+var _require = require("./preview"),
+    Preview = _require.Preview;
+
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
@@ -61,6 +64,12 @@ var PageControls = /*#__PURE__*/function () {
     this.map.addEventListener("zoom", function (event) {
       return _this.zoom = event.detail.zoom;
     });
+    this.map.addEventListener("zoom", function (event) {
+      return _this.preview.update();
+    });
+    this.map.addEventListener("drag", function (event) {
+      return _this.preview.update();
+    });
     this.map.addEventListener("goToArea", function (event) {
       return setTimeout(function () {
         return _this.findRoom(event.detail.id);
@@ -81,6 +90,7 @@ var PageControls = /*#__PURE__*/function () {
     this.settingsModal = jQuery("#settings");
     this.settingsForm = jQuery("#settings form");
     this.settings = new _mudletMapRenderer.Settings();
+    this.preview = new Preview(this.map);
     this.zIndex = 0;
     var loaded = localStorage.getItem("settings");
 
@@ -192,6 +202,9 @@ var PageControls = /*#__PURE__*/function () {
       if (this.settings.keepZoomLevel && this.zoom) {
         this.renderer.controls.setZoom(this.zoom);
       }
+
+      this.renderer.paper.activate();
+      return this.preview.init(this.renderer.controls);
     }
   }, {
     key: "genericSetup",
@@ -279,7 +292,7 @@ var PageControls = /*#__PURE__*/function () {
     }
   }, {
     key: "submitSearch",
-    value: function submitSearch(event) {
+    value: function submitSearch() {
       this.searchModal.modal("toggle");
       var inputs = this.search.find(":input");
       var formData = {};
@@ -301,12 +314,16 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "findRoom",
     value: function findRoom(id) {
+      var _this3 = this;
+
       var area = this.reader.getAreaByRoomId(id);
 
       if (area !== undefined) {
-        this.renderArea(area.areaId, area.zIndex);
-        this.renderer.controls.setZoom(1);
-        this.renderer.controls.centerRoom(id);
+        this.renderArea(area.areaId, area.zIndex).then(function () {
+          _this3.renderer.controls.setZoom(1);
+
+          _this3.renderer.controls.centerRoom(id);
+        });
       } else {
         this.showToast("Nie znaleziono takiej lokacji");
       }
@@ -491,7 +508,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "registerKeyBoard",
     value: function registerKeyBoard() {
-      var _this3 = this;
+      var _this4 = this;
 
       var directionKeys = {
         Numpad1: "sw",
@@ -506,71 +523,71 @@ var PageControls = /*#__PURE__*/function () {
         NumpadDivide: "d"
       };
       window.addEventListener("keydown", function (event) {
-        if (_this3.settings.disableKeyBinds) {
+        if (_this4.settings.disableKeyBinds) {
           return;
         }
 
         if (event.code === "F1") {
           event.preventDefault();
 
-          _this3.showHelp();
+          _this4.showHelp();
         }
 
         if (event.ctrlKey && event.code === "KeyF") {
           event.preventDefault();
 
-          _this3.showSearch();
+          _this4.showSearch();
         }
       });
       window.addEventListener("keydown", function (event) {
-        if (jQuery("input").is(":focus") || _this3.settings.disableKeyBinds) {
+        if (jQuery("input").is(":focus") || _this4.settings.disableKeyBinds) {
           return;
         }
 
         if (event.ctrlKey && event.code === "KeyS") {
-          _this3.saveImage();
+          _this4.saveImage();
 
           event.preventDefault();
         }
 
         if (event.code === "Equal") {
-          _this3.renderer.controls.deltaZoom(1.1);
+          _this4.renderer.controls.deltaZoom(1.1);
 
           event.preventDefault();
         }
 
         if (event.code === "Minus") {
-          _this3.renderer.controls.deltaZoom(0.9);
+          _this4.renderer.controls.deltaZoom(0.9);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowUp") {
-          _this3.move(0, -1);
+          _this4.move(0, -1);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowDown") {
-          _this3.move(0, 1);
+          _this4.move(0, 1);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowLeft") {
-          _this3.move(-1, 0);
+          _this4.move(-1, 0);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowRight") {
-          _this3.move(1, 0);
+          _this4.move(1, 0);
 
           event.preventDefault();
         }
 
         if (directionKeys.hasOwnProperty(event.code)) {
-          _this3.goDirection(directionKeys[event.code]);
+          _this4.goDirection(directionKeys[event.code]);
 
           event.preventDefault();
         }
@@ -639,7 +656,7 @@ function dirsShortToLong(dir) {
   return result !== undefined ? result : dir;
 }
 
-},{"./npc":47,"mudlet-map-renderer":12}],2:[function(require,module,exports){
+},{"./npc":47,"./preview":48,"mudlet-map-renderer":12}],2:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -9068,7 +9085,7 @@ class Controls {
 
         this.view.center = bounds.center;
         this.view.zoom = Math.min(this.view.size.width / bounds.width, this.view.size.height / bounds.height);
-        this.view.minZoom = this.view.zoom;
+        this.view.minZoom = this.view.zoom
     }
 
     zoom(event) {
@@ -9100,6 +9117,7 @@ class Controls {
             let delta = event.downPoint.subtract(event.point);
             this.view.translate(delta.negate());
             this.isDrag = true;
+            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
         };
         toolPan.onMouseDown = (event) => {
             this.isDrag = false;
@@ -9141,6 +9159,7 @@ class Controls {
         if (room !== undefined) {
             this.view.center = room.render.localToGlobal(room.render.position);
             this.selectRoom(room);
+            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
         }
     }
 
@@ -33053,4 +33072,105 @@ module.exports = {
 };
 
 }).call(this)}).call(this,require("buffer").Buffer)
-},{"buffer":6,"https":9}]},{},[1]);
+},{"buffer":6,"https":9}],48:[function(require,module,exports){
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
+
+var paper = require("paper");
+/**
+ * @typedef {Object} Renderer
+ * @property {paper.PaperScope} paper
+ */
+
+/**
+ * @typedef {Object} Controls
+ * @property {Renderer} renderer
+ */
+
+
+var Preview = /*#__PURE__*/function () {
+  function Preview(map) {
+    _classCallCheck(this, Preview);
+
+    this.map = map;
+    this.preview = document.querySelector(".preview-container");
+    this.previewImg = document.querySelector(".preview-img");
+    this.previewPanContainer = document.querySelector(".preview-pan-container");
+    this.previewPan = document.querySelector(".preview-pan");
+  }
+  /**
+   * 
+   * @param {Controls} controls 
+   * @returns 
+   */
+
+
+  _createClass(Preview, [{
+    key: "init",
+    value: function init(controls) {
+      var _this = this;
+
+      this.controls = controls;
+      this.view = controls.renderer.paper.view;
+      window.view = this.view;
+      this.backgroundLayer = controls.renderer.backgroundLayer;
+      window.pv = this;
+      window.backgroundLayer = this.backgroundLayer;
+      this.baseBounds = {
+        left: this.view.bounds.left,
+        top: this.view.bounds.top
+      };
+      return new Promise(function (resolve, reject) {
+        setTimeout(function () {
+          var width = _this.view.size.width / _this.backgroundLayer.bounds.width;
+          var height = _this.view.size.height / _this.backgroundLayer.bounds.height;
+          _this.previewImg.style.maxWidth = "".concat(width * 100, "%");
+          _this.previewImg.style.maxHeight = "".concat(height * 100, "%");
+
+          _this.previewImg.setAttribute('src', _this.map.toDataURL());
+
+          _this.previewImg.addEventListener("load", function () {
+            _this.previewPanContainer.style.width = "".concat(_this.previewImg.width, "px");
+            _this.previewPanContainer.style.height = "".concat(_this.previewImg.height, "px");
+
+            _this.update();
+          }, {
+            once: true
+          });
+
+          resolve();
+          _this.preview.style.opacity = 0;
+        }, 1);
+      });
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      var _this2 = this;
+
+      this.preview.style.opacity = 0.9;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(function () {
+        return _this2.preview.style.opacity = 0;
+      }, 3000);
+      var zoomFactor = this.view.minZoom / this.view.zoom;
+      this.previewPan.style.width = "".concat(zoomFactor * 100, "%");
+      this.previewPan.style.height = "".concat(zoomFactor * 100, "%");
+      this.previewPan.style.left = "".concat(-((this.baseBounds.left - this.view.bounds.left) / this.view.bounds.width) * (100 * zoomFactor), "%");
+      this.previewPan.style.top = "".concat(-((this.baseBounds.top - this.view.bounds.top) / this.view.bounds.height) * (100 * zoomFactor), "%");
+    }
+  }]);
+
+  return Preview;
+}();
+
+module.exports = {
+  Preview: Preview
+};
+
+},{"paper":17}]},{},[1]);
