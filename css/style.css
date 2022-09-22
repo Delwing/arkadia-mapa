@@ -140,7 +140,6 @@ button.control span {
     margin-bottom: -5px;
     z-index: 99;
     display: none;
-    opacity: 0.5;
     width: 100%;
 }
 
@@ -196,7 +195,7 @@ h2 a, h2 a:hover {
     overflow: hidden;
     display: flex;
     align-items: center;
-    
+    background: rgba(0,0,0,0);
 }
 
 .preview {
@@ -205,7 +204,8 @@ h2 a, h2 a:hover {
     flex-direction: column; 
     justify-content: center;
     overflow: hidden;
-    opacity: 0.8;
+    background: rgba(0,0,0,0);
+    backdrop-filter: blur(3px) brightness(120%);
 }
 
 .preview-pan {
@@ -224,6 +224,8 @@ h2 a, h2 a:hover {
 
 .preview-img {
     border: 1px solid rgba(92, 92, 92, 0.618);
+    backdrop-filter: blur(3px) brightness(60%);
+    opacity: 0.8;
 }
 
 @media all and (max-width: 1400px) {

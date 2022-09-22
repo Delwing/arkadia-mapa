@@ -167,7 +167,7 @@ var PageControls = /*#__PURE__*/function () {
       this.showToast("Zapisano ustawienia");
       this.settingsModal.modal("toggle");
       this.saveSettings();
-      this.render();
+      this.render(true);
     }
   }, {
     key: "saveSettings",
@@ -176,16 +176,16 @@ var PageControls = /*#__PURE__*/function () {
     }
   }, {
     key: "render",
-    value: function render() {
-      this.renderArea(this.select.val(), this.zIndex);
+    value: function render(force) {
+      this.renderArea(this.select.val(), this.zIndex, force);
     }
   }, {
     key: "renderArea",
-    value: function renderArea(areaId, zIndex) {
+    value: function renderArea(areaId, zIndex, force) {
       var _this2 = this;
 
       return new Promise(function (resolve, reject) {
-        if (_this2.areaId !== areaId || _this2.zIndex !== zIndex) {
+        if (_this2.areaId !== areaId || _this2.zIndex !== zIndex || force) {
           var mapElement = document.getElementById("map");
           mapElement.addEventListener("renderComplete", function (event, renderer) {
             _this2.preview.init(event.detail.controls).then(function () {
@@ -33185,7 +33185,7 @@ var Preview = /*#__PURE__*/function () {
     value: function update() {
       var _this2 = this;
 
-      this.preview.style.opacity = 0.9;
+      this.preview.style.opacity = 1;
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function () {
         return _this2.preview.style.opacity = 0;
