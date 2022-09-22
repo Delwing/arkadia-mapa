@@ -182,29 +182,47 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "renderArea",
     value: function renderArea(areaId, zIndex) {
-      localStorage.setItem("position", JSON.stringify({
-        area: areaId,
-        zIndex: zIndex
-      }));
-      jQuery("body").css("background", this.settings.mapBackground);
-      var area = this.reader.getArea(areaId, zIndex);
+      var _this2 = this;
 
-      if (this.renderer) {
-        this.renderer.clear();
-      }
+      return new Promise(function (resolve, reject) {
+        if (_this2.areaId !== areaId || _this2.zIndex !== zIndex) {
+          var mapElement = document.getElementById("map");
+          mapElement.addEventListener("renderComplete", function (event, renderer) {
+            _this2.preview.init(event.detail.controls).then(function () {
+              return resolve();
+            });
+          }, {
+            once: true
+          });
+          _this2.areaId = areaId;
+          _this2.zIndex = zIndex;
+          localStorage.setItem("position", JSON.stringify({
+            area: areaId,
+            zIndex: zIndex
+          }));
+          jQuery("body").css("background", _this2.settings.mapBackground);
 
-      this.hideRoomInfo();
-      this.renderer = new _mudletMapRenderer.Renderer(document.getElementById("map"), this.reader, area, this.reader.getColors(), this.settings);
-      this.select.val(areaId);
-      this.populateLevelButtons(area.getLevels(), zIndex);
-      this.zIndex = zIndex;
+          var _area = _this2.reader.getArea(areaId, zIndex);
 
-      if (this.settings.keepZoomLevel && this.zoom) {
-        this.renderer.controls.setZoom(this.zoom);
-      }
+          if (_this2.renderer) {
+            _this2.renderer.clear();
+          }
 
-      this.renderer.paper.activate();
-      return this.preview.init(this.renderer.controls);
+          _this2.renderer = new _mudletMapRenderer.Renderer(mapElement, _this2.reader, _area, _this2.reader.getColors(), _this2.settings);
+
+          _this2.select.val(areaId);
+
+          _this2.populateLevelButtons(_area.getLevels(), zIndex);
+
+          _this2.hideRoomInfo();
+
+          if (_this2.settings.keepZoomLevel && _this2.zoom) {
+            _this2.renderer.controls.setZoom(_this2.zoom);
+          }
+        }
+
+        resolve();
+      });
     }
   }, {
     key: "genericSetup",
@@ -277,17 +295,17 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "populateSelectBox",
     value: function populateSelectBox() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.reader.getAreas().forEach(function (areaElement, index) {
         if (!areaElement.rooms.length) {
           return;
         }
 
-        _this2.select.append(new Option(areaElement.areaName, areaElement.areaId));
+        _this3.select.append(new Option(areaElement.areaName, areaElement.areaId));
       });
       this.select.on("change", function (event) {
-        _this2.renderArea(event.target.value, 0);
+        _this3.renderArea(event.target.value, 0);
       });
     }
   }, {
@@ -314,15 +332,15 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "findRoom",
     value: function findRoom(id) {
-      var _this3 = this;
+      var _this4 = this;
 
       var area = this.reader.getAreaByRoomId(id);
 
       if (area !== undefined) {
         this.renderArea(area.areaId, area.zIndex).then(function () {
-          _this3.renderer.controls.setZoom(1);
+          _this4.renderer.controls.setZoom(1);
 
-          _this3.renderer.controls.centerRoom(id);
+          _this4.renderer.controls.centerRoom(id);
         });
       } else {
         this.showToast("Nie znaleziono takiej lokacji");
@@ -428,9 +446,9 @@ var PageControls = /*#__PURE__*/function () {
       var destRoom = this.reader.getRoomById(id);
 
       if (destRoom.areaId !== this.renderer.area.areaId) {
-        var _area = this.reader.getAreaProperties(destRoom.areaId);
+        var _area2 = this.reader.getAreaProperties(destRoom.areaId);
 
-        areaLink = " ->  " + '<a href="#" data-room="' + destRoom.id + '">' + _area.areaName + "</a>";
+        areaLink = " ->  " + '<a href="#" data-room="' + destRoom.id + '">' + _area2.areaName + "</a>";
       }
 
       return "<li>" + this.translateDir(exit) + " : " + '<a href="#" data-room="' + id + '">' + id + "</a>" + areaLink + "</li>";
@@ -508,7 +526,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "registerKeyBoard",
     value: function registerKeyBoard() {
-      var _this4 = this;
+      var _this5 = this;
 
       var directionKeys = {
         Numpad1: "sw",
@@ -523,71 +541,71 @@ var PageControls = /*#__PURE__*/function () {
         NumpadDivide: "d"
       };
       window.addEventListener("keydown", function (event) {
-        if (_this4.settings.disableKeyBinds) {
+        if (_this5.settings.disableKeyBinds) {
           return;
         }
 
         if (event.code === "F1") {
           event.preventDefault();
 
-          _this4.showHelp();
+          _this5.showHelp();
         }
 
         if (event.ctrlKey && event.code === "KeyF") {
           event.preventDefault();
 
-          _this4.showSearch();
+          _this5.showSearch();
         }
       });
       window.addEventListener("keydown", function (event) {
-        if (jQuery("input").is(":focus") || _this4.settings.disableKeyBinds) {
+        if (jQuery("input").is(":focus") || _this5.settings.disableKeyBinds) {
           return;
         }
 
         if (event.ctrlKey && event.code === "KeyS") {
-          _this4.saveImage();
+          _this5.saveImage();
 
           event.preventDefault();
         }
 
         if (event.code === "Equal") {
-          _this4.renderer.controls.deltaZoom(1.1);
+          _this5.renderer.controls.deltaZoom(1.1);
 
           event.preventDefault();
         }
 
         if (event.code === "Minus") {
-          _this4.renderer.controls.deltaZoom(0.9);
+          _this5.renderer.controls.deltaZoom(0.9);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowUp") {
-          _this4.move(0, -1);
+          _this5.move(0, -1);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowDown") {
-          _this4.move(0, 1);
+          _this5.move(0, 1);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowLeft") {
-          _this4.move(-1, 0);
+          _this5.move(-1, 0);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowRight") {
-          _this4.move(1, 0);
+          _this5.move(1, 0);
 
           event.preventDefault();
         }
 
         if (directionKeys.hasOwnProperty(event.code)) {
-          _this4.goDirection(directionKeys[event.code]);
+          _this5.goDirection(directionKeys[event.code]);
 
           event.preventDefault();
         }
@@ -9292,6 +9310,7 @@ class Renderer {
         this.transform();
         if (this.isVisual) {
             this.controls = new Controls(this, this.reader, this.element, this.paper);
+            this.element.dispatchEvent(new CustomEvent("renderComplete", {detail: this}));
         }
     }
 
