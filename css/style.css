@@ -197,6 +197,7 @@ h2 a, h2 a:hover {
     background: rgba(0,0,0,0);
     border: 1px solid pink;
     backdrop-filter: blur(3px) brightness(60%);
+    opacity: 0;
 }
 
 .preview {
