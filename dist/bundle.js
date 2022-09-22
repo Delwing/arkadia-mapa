@@ -9715,14 +9715,15 @@ class Renderer {
             if (!this.settings.transparentLabels) {
                 background.fillColor = new paper.Color(value.BgColor.r / 255, value.BgColor.g / 255, value.BgColor.b / 255);
             }
-            let text = new paper.PointText(background.bounds.center.add(0, 0.15));
+            let text = new paper.PointText(background.bounds.center.add(0, 0.15 * 8));
             text.fillColor = new paper.Color(value.FgColor.r / 255, value.FgColor.g / 255, value.FgColor.b / 255);
-            text.fontSize = Math.min(0.75, value.Width / (value.Text.length / 2));
+            let ratio = Math.min(0.75, value.Width / (value.Text.length / 2));
+            text.fontSize = 4
             text.content = value.Text;
             text.fontFamily = this.settings.fontFamily;
             text.justification = "center";
             text.locked = true;
-            text.scale(1, -1);
+            text.scale(ratio / 4, -ratio / 4);
         }
     }
 
@@ -33157,7 +33158,7 @@ var Preview = /*#__PURE__*/function () {
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function () {
         return _this2.preview.style.opacity = 0;
-      }, 3000);
+      }, 5000);
       var zoomFactor = this.view.minZoom / this.view.zoom;
       this.previewPan.style.width = "".concat(zoomFactor * 100, "%");
       this.previewPan.style.height = "".concat(zoomFactor * 100, "%");
