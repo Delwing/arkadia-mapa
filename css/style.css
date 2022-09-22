@@ -194,6 +194,8 @@ h2 a, h2 a:hover {
     max-height: 25%;
     pointer-events: none; 
     overflow: hidden;
+    display: flex;
+    align-items: center;
     
 }
 

@@ -33146,6 +33146,7 @@ var Preview = /*#__PURE__*/function () {
 
           resolve();
           _this.preview.style.opacity = 0;
+          _this.previewImg.style.background = _this.controls.renderer.settings.mapBackground;
         }, 1);
       });
     }
