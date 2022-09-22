@@ -188,8 +188,10 @@ h2 a, h2 a:hover {
     position: absolute;
     right: 10px;
     top: 100px;
-    width: 400px;
-    height: 400px;
+    width: 600px;
+    height: 600px;
+    max-width: 25%;
+    max-height: 25%;
     pointer-events: none; 
     overflow: hidden;
     
@@ -216,6 +218,10 @@ h2 a, h2 a:hover {
     position: absolute;
     z-index: 2;
     overflow: hidden;
+}
+
+.preview-img {
+    border: 1px solid rgba(92, 92, 92, 0.618);
 }
 
 @media all and (max-width: 1400px) {
