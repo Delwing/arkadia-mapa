@@ -186,14 +186,14 @@ var PageControls = /*#__PURE__*/function () {
 
       return new Promise(function (resolve, reject) {
         if (_this2.areaId !== areaId || _this2.zIndex !== zIndex || force) {
-          var mapElement = document.getElementById("map");
-          mapElement.addEventListener("renderComplete", function (event, renderer) {
+          _this2.map.addEventListener("renderComplete", function (event, renderer) {
             _this2.preview.init(event.detail.controls).then(function () {
               return resolve();
             });
           }, {
             once: true
           });
+
           _this2.areaId = areaId;
           _this2.zIndex = zIndex;
           localStorage.setItem("position", JSON.stringify({
@@ -208,7 +208,7 @@ var PageControls = /*#__PURE__*/function () {
             _this2.renderer.clear();
           }
 
-          _this2.renderer = new _mudletMapRenderer.Renderer(mapElement, _this2.reader, _area, _this2.reader.getColors(), _this2.settings);
+          _this2.renderer = new _mudletMapRenderer.Renderer(_this2.map, _this2.reader, _area, _this2.reader.getColors(), _this2.settings);
 
           _this2.select.val(areaId);
 
@@ -9288,7 +9288,7 @@ class Renderer {
         this.render();
     }
 
-    render(pngRender = false) {
+    async render(pngRender = false) {
         this.pngRender = pngRender;
         this.renderBackground(this.bounds.minX - padding, this.bounds.minY - padding, this.bounds.maxX + padding, this.bounds.maxY + padding);
         this.renderHeader(this.bounds.minX - padding / 2, this.bounds.maxY + padding / 2);
@@ -33185,7 +33185,7 @@ var Preview = /*#__PURE__*/function () {
           _this.preview.style.opacity = 0;
           _this.previewImgContainer.style.background = _this.controls.renderer.settings.mapBackground;
           _this.previewImg.style.background = _this.controls.renderer.settings.mapBackground;
-        }, 2);
+        }, 10);
       });
     }
   }, {
