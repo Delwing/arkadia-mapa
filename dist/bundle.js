@@ -23,6 +23,14 @@ var _require = require("./preview"),
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
+
+var svgToDataURL = function svgToDataURL(svgStr) {
+  var encoded = encodeURIComponent(svgStr).replace(/'/g, '%27').replace(/"/g, '%22');
+  var header = 'data:image/svg+xml,';
+  var dataUrl = header + encoded;
+  return dataUrl;
+};
+
 var roomNpc = {};
 (0, _npc.downloadNpc)().then(function (value) {
   return roomNpc = value;
@@ -47,7 +55,10 @@ if (position) {
 
 var PageControls = /*#__PURE__*/function () {
   function PageControls(reader) {
-    var _this = this;
+    var _this = this,
+        _this$saveImageButton,
+        _this$downloadImageBu,
+        _this$copyImageButton;
 
     _classCallCheck(this, PageControls);
 
@@ -80,6 +91,7 @@ var PageControls = /*#__PURE__*/function () {
     this.infoBox = jQuery(".info-box");
     this.levels = jQuery(".levels");
     this.saveImageButton = document.querySelector(".save-image");
+    this.downloadImageButton = document.querySelector(".download-image");
     this.copyImageButton = jQuery(".copy-image");
     this.zoomButton = jQuery(".zoom-controls .btn");
     this.toastContainer = jQuery(".toast");
@@ -107,10 +119,13 @@ var PageControls = /*#__PURE__*/function () {
 
       _this.renderArea(_this.select.val(), zIndex);
     });
-    this.saveImageButton.addEventListener("click", function () {
+    (_this$saveImageButton = this.saveImageButton) === null || _this$saveImageButton === void 0 ? void 0 : _this$saveImageButton.addEventListener("click", function () {
       return _this.saveImage();
     });
-    this.copyImageButton.on("click", function () {
+    (_this$downloadImageBu = this.downloadImageButton) === null || _this$downloadImageBu === void 0 ? void 0 : _this$downloadImageBu.addEventListener("click", function () {
+      return _this.downloadImage();
+    });
+    (_this$copyImageButton = this.copyImageButton) === null || _this$copyImageButton === void 0 ? void 0 : _this$copyImageButton.on("click", function () {
       return _this.copyImage();
     });
     this.zoomButton.on("click", function (event) {
@@ -341,6 +356,33 @@ var PageControls = /*#__PURE__*/function () {
           _this4.renderer.controls.setZoom(1);
 
           _this4.renderer.controls.centerRoom(id);
+
+          _this4.renderer.renderHighlight(2);
+        });
+      } else {
+        this.showToast("Nie znaleziono takiej lokacji");
+      }
+    }
+  }, {
+    key: "findRooms",
+    value: function findRooms(rooms) {
+      var _this5 = this;
+
+      var area = this.reader.getAreaByRoomId(rooms[0]);
+
+      if (area !== undefined) {
+        this.renderArea(area.areaId, area.zIndex).then(function () {
+          _this5.renderer.controls.setZoom(1);
+
+          var centroid = {
+            x: rooms[0].x,
+            y: rooms[0].y
+          };
+          rooms.forEach(function (room) {
+            _this5.renderer.renderHighlight(room);
+          });
+
+          _this5.renderer.controls.centerOnItem(_this5.renderer.highlights);
         });
       } else {
         this.showToast("Nie znaleziono takiej lokacji");
@@ -494,10 +536,17 @@ var PageControls = /*#__PURE__*/function () {
       a.remove();
     }
   }, {
+    key: "downloadImage",
+    value: function downloadImage() {
+      var a = jQuery("<a>").attr("href", svgToDataURL(this.renderer.exportSvg())).attr("download", this.renderer.area.areaName + ".svg").appendTo("body");
+      a[0].click();
+      a.remove();
+    }
+  }, {
     key: "copyImage",
     value: function copyImage() {
       if (typeof ClipboardItem !== "undefined") {
-        this.map[0].toBlob(function (blob) {
+        this.map.toBlob(function (blob) {
           return navigator.clipboard.write([new ClipboardItem({
             "image/png": blob
           })]);
@@ -526,7 +575,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "registerKeyBoard",
     value: function registerKeyBoard() {
-      var _this5 = this;
+      var _this6 = this;
 
       var directionKeys = {
         Numpad1: "sw",
@@ -541,71 +590,71 @@ var PageControls = /*#__PURE__*/function () {
         NumpadDivide: "d"
       };
       window.addEventListener("keydown", function (event) {
-        if (_this5.settings.disableKeyBinds) {
+        if (_this6.settings.disableKeyBinds) {
           return;
         }
 
         if (event.code === "F1") {
           event.preventDefault();
 
-          _this5.showHelp();
+          _this6.showHelp();
         }
 
         if (event.ctrlKey && event.code === "KeyF") {
           event.preventDefault();
 
-          _this5.showSearch();
+          _this6.showSearch();
         }
       });
       window.addEventListener("keydown", function (event) {
-        if (jQuery("input").is(":focus") || _this5.settings.disableKeyBinds) {
+        if (jQuery("input").is(":focus") || _this6.settings.disableKeyBinds) {
           return;
         }
 
         if (event.ctrlKey && event.code === "KeyS") {
-          _this5.saveImage();
+          _this6.saveImage();
 
           event.preventDefault();
         }
 
         if (event.code === "Equal") {
-          _this5.renderer.controls.deltaZoom(1.1);
+          _this6.renderer.controls.deltaZoom(1.1);
 
           event.preventDefault();
         }
 
         if (event.code === "Minus") {
-          _this5.renderer.controls.deltaZoom(0.9);
+          _this6.renderer.controls.deltaZoom(0.9);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowUp") {
-          _this5.move(0, -1);
+          _this6.move(0, -1);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowDown") {
-          _this5.move(0, 1);
+          _this6.move(0, 1);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowLeft") {
-          _this5.move(-1, 0);
+          _this6.move(-1, 0);
 
           event.preventDefault();
         }
 
         if (event.code === "ArrowRight") {
-          _this5.move(1, 0);
+          _this6.move(1, 0);
 
           event.preventDefault();
         }
 
         if (directionKeys.hasOwnProperty(event.code)) {
-          _this5.goDirection(directionKeys[event.code]);
+          _this6.goDirection(directionKeys[event.code]);
 
           event.preventDefault();
         }
@@ -627,6 +676,7 @@ var PageControls = /*#__PURE__*/function () {
 }();
 
 var controls = new PageControls(new _mudletMapRenderer.MapReader(mapData, colors));
+window.controls = controls;
 controls.genericSetup();
 controls.populateSelectBox();
 var area = 37;
@@ -9181,6 +9231,13 @@ class Controls {
         }
     }
 
+    centerOnItem(item) {
+        if (item !== undefined) {
+            this.view.center = item.localToGlobal(item.position);
+            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
+        }
+    }
+
     goToRoomArea(id) {
         let destRoom = this.reader.getRoomById(id);
         this.element.dispatchEvent(new CustomEvent("goToArea", { detail: destRoom }));
@@ -9285,10 +9342,12 @@ class Renderer {
         this.overlayLayer = new paper.Layer();
         this.exitsRendered = {};
         this.defualtColor = new paper.Color(this.colors.default[0] / 255, this.colors.default[1] / 255, this.colors.default[2] / 255);
+        this.highlights = new paper.Group();
+        this.highlights.locked = true;
         this.render();
     }
 
-    async render(pngRender = false) {
+    render(pngRender = false) {
         this.pngRender = pngRender;
         this.renderBackground(this.bounds.minX - padding, this.bounds.minY - padding, this.bounds.maxX + padding, this.bounds.maxY + padding);
         this.renderHeader(this.bounds.minX - padding / 2, this.bounds.maxY + padding / 2);
@@ -9825,7 +9884,7 @@ class Renderer {
         let circle = new paper.Shape.Circle(new paper.Point(room.x + this.roomFactor * 0.5, room.y + this.roomFactor * 0.5), this.roomDiagonal * 0.6);
         circle.fillColor = new paper.Color(0.5, 0.1, 0.1, 0.2);
         circle.strokeWidth = this.exitFactor * 5;
-        circle.hadowColor = new paper.Color(1, 1, 1);
+        circle.shadowColor = room.render.fillColor
         circle.shadowBlur = 12;
         if (color === undefined) {
             color = [0, 0.9, 0.7];
@@ -9859,6 +9918,27 @@ class Renderer {
         if (this.selection !== undefined) {
             this.selection.remove();
         }
+    }
+
+    renderHighlight(id, color) {
+        this.overlayLayer.activate();
+        let room = this.area.getRoomById(id);
+        let highlight = new paper.Shape.Circle(new paper.Point(room.x + this.roomFactor * 0.5, room.y + this.roomFactor * 0.5), this.roomDiagonal * 0.6);
+        highlight.fillColor = new paper.Color(0.5, 0.1, 0.1, 0.2);
+        highlight.strokeWidth = this.exitFactor * 4;
+        highlight.shadowColor = room.render.fillColor;
+        highlight.shadowBlur = 12;
+        highlight.locked = true;
+        if (color === undefined) {
+            color = [0.4, 0.9, 0.3];
+        }
+        highlight.strokeColor = new paper.Color(color[0], color[1], color[2]);
+        highlight.dashArray = [0.1, 0.1];
+        this.highlights.addChild(highlight)
+    }
+
+    clearHighlights() {
+        this.highlights.removeChildren();
     }
 
     clear() {
