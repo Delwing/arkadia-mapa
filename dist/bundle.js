@@ -356,8 +356,6 @@ var PageControls = /*#__PURE__*/function () {
           _this4.renderer.controls.setZoom(1);
 
           _this4.renderer.controls.centerRoom(id);
-
-          _this4.renderer.renderHighlight(2);
         });
       } else {
         this.showToast("Nie znaleziono takiej lokacji");
@@ -9153,7 +9151,7 @@ class Controls {
 
         this.view.center = bounds.center;
         this.view.zoom = Math.min(this.view.size.width / bounds.width, this.view.size.height / bounds.height);
-        this.view.minZoom = this.view.zoom
+        this.view.minZoom = this.view.zoom;
     }
 
     zoom(event) {
@@ -9185,10 +9183,10 @@ class Controls {
             let delta = event.downPoint.subtract(event.point);
             this.view.translate(delta.negate());
             this.isDrag = true;
-            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
         };
-        toolPan.onMouseDown = (event) => {
+        toolPan.onMouseDown = () => {
             this.isDrag = false;
+            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
         };
         toolPan.onMouseUp = () => {
             this.isDrag = false;
@@ -9227,14 +9225,6 @@ class Controls {
         if (room !== undefined) {
             this.view.center = room.render.localToGlobal(room.render.position);
             this.selectRoom(room);
-            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
-        }
-    }
-
-    centerOnItem(item) {
-        if (item !== undefined) {
-            this.view.center = item.localToGlobal(item.position);
-            this.element.dispatchEvent(new CustomEvent("drag", { detail: this.view }));
         }
     }
 
@@ -9283,6 +9273,7 @@ class Settings {
         this.mapBackground = Colors.DEFAULT_BACKGROUND
         this.linesColor = Colors.DEFAULT
         this.transparentLabels = false;
+        this.emboss = false;
     }
 }
 
@@ -9342,8 +9333,7 @@ class Renderer {
         this.overlayLayer = new paper.Layer();
         this.exitsRendered = {};
         this.defualtColor = new paper.Color(this.colors.default[0] / 255, this.colors.default[1] / 255, this.colors.default[2] / 255);
-        this.highlights = new paper.Group();
-        this.highlights.locked = true;
+        this.highlights = [];
         this.render();
     }
 
@@ -9369,7 +9359,7 @@ class Renderer {
         this.transform();
         if (this.isVisual) {
             this.controls = new Controls(this, this.reader, this.element, this.paper);
-            this.element.dispatchEvent(new CustomEvent("renderComplete", {detail: this}));
+            this.element.dispatchEvent(new CustomEvent("renderComplete", { detail: this }));
         }
     }
 
@@ -9447,6 +9437,21 @@ class Renderer {
 
         for (let dir in room.stubs) {
             this.renderStub(room, dirNumbers[room.stubs[dir]]);
+        }
+
+        if (this.settings.emboss) {
+            this.overlayLayer.activate()
+            let emboss
+            if (new paper.Color(this.settings.linesColor).lightness > 0.41) {
+                emboss= new paper.Path([room.render.bounds.topLeft, room.render.bounds.topRight, room.render.bounds.bottomRight])
+                emboss.strokeColor = '#000000'
+            } else {
+                emboss = emboss= new paper.Path([room.render.bounds.topLeft, room.render.bounds.bottomLeft, room.render.bounds.bottomRight])
+                emboss.strokeColor = '#ffffff'
+            }
+            
+            
+            emboss.strokeWidth = this.exitFactor
         }
 
         this.renderChar(room);
@@ -9884,7 +9889,7 @@ class Renderer {
         let circle = new paper.Shape.Circle(new paper.Point(room.x + this.roomFactor * 0.5, room.y + this.roomFactor * 0.5), this.roomDiagonal * 0.6);
         circle.fillColor = new paper.Color(0.5, 0.1, 0.1, 0.2);
         circle.strokeWidth = this.exitFactor * 5;
-        circle.shadowColor = room.render.fillColor
+        circle.hadowColor = new paper.Color(1, 1, 1);
         circle.shadowBlur = 12;
         if (color === undefined) {
             color = [0, 0.9, 0.7];
@@ -9928,18 +9933,19 @@ class Renderer {
         highlight.strokeWidth = this.exitFactor * 4;
         highlight.shadowColor = room.render.fillColor;
         highlight.shadowBlur = 12;
-        highlight.locked = true;
         if (color === undefined) {
             color = [0.4, 0.9, 0.3];
         }
         highlight.strokeColor = new paper.Color(color[0], color[1], color[2]);
         highlight.dashArray = [0.1, 0.1];
-        this.highlights.addChild(highlight)
+        this.highlights.push(highlight)
     }
 
-    clearHighlights() {
-        this.highlights.removeChildren();
+    clearHighlight(id) {
+        this.highlights.forEach((element) => element.remove());
+        this.highlights = [];
     }
+
 
     clear() {
         this.paper.clear();
@@ -10009,7 +10015,6 @@ function dirsShortToLong(dir) {
 function dirLongToShort(dir) {
     return dirs[dir] !== undefined ? dirs[dir] : dir;
 }
-
 },{"../reader/MapReader":16,"./controls":13,"paper":17}],15:[function(require,module,exports){
 class Area {
     constructor(areaId, areaName, rooms, labels, zIndex, levels) {
