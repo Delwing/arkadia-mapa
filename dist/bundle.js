@@ -349,6 +349,10 @@ var PageControls = /*#__PURE__*/function () {
     value: function findRoom(id) {
       var _this4 = this;
 
+      if (!id) {
+        return;
+      }
+
       var area = this.reader.getAreaByRoomId(id);
 
       if (area !== undefined) {
@@ -33172,6 +33176,8 @@ if (searchNpcsField && searchNpcsField.autoComplete) {
     }
   });
   searchNpcsField.on("autocomplete.select", function (evt, item) {
+    console.log(item);
+
     if (item.value instanceof Function) {
       item.value();
       evt.preventDefault();
