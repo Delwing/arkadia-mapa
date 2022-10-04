@@ -33175,6 +33175,8 @@ if (searchNpcsField && searchNpcsField.autoComplete) {
     if (item.value instanceof Function) {
       item.value();
       evt.preventDefault();
+    } else {
+      searchField.submit();
     }
   });
   searchNpcsField.on("input", function (evt) {
