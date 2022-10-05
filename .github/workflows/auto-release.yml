@@ -25,7 +25,7 @@ jobs:
     needs: [ check-map-change ]
     if: needs.check-map-change.outputs.map_changed == 'True'
     steps:
-      - run: yarn
+      - run: yarn --cwd action
       - id: release
         name: Bump version and release
         uses: rymndhng/release-on-push-action@master
