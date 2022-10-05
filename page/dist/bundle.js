@@ -483,7 +483,7 @@ var PageControls = /*#__PURE__*/function () {
       var areaLink = "";
       var destRoom = this.reader.getRoomById(id);
 
-      if (destRoom.areaId !== this.renderer.area.areaId) {
+      if (parseInt(destRoom.areaId) !== this.renderer.area.areaId) {
         var _area2 = this.reader.getAreaProperties(destRoom.areaId);
 
         areaLink = " ->  " + '<a href="#" data-room="' + destRoom.id + '">' + _area2.areaName + "</a>";
