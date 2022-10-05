@@ -376,15 +376,9 @@ var PageControls = /*#__PURE__*/function () {
         this.renderArea(area.areaId, area.zIndex).then(function () {
           _this5.renderer.controls.setZoom(1);
 
-          var centroid = {
-            x: rooms[0].x,
-            y: rooms[0].y
-          };
-          rooms.forEach(function (room) {
-            _this5.renderer.renderHighlight(room);
-          });
+          var group = _this5.renderer.renderPath(rooms, [1, 0.2, 0]);
 
-          _this5.renderer.controls.centerOnItem(_this5.renderer.highlights);
+          _this5.renderer.controls.centerOnItem(group);
         });
       } else {
         this.showToast("Nie znaleziono takiej lokacji");
@@ -9233,6 +9227,10 @@ class Controls {
         }
     }
 
+    centerOnItem(item) {
+        this.view.center = item.localToGlobal(item.position);
+    }
+
     goToRoomArea(id) {
         let destRoom = this.reader.getRoomById(id);
         this.element.dispatchEvent(new CustomEvent("goToArea", { detail: destRoom }));
@@ -9339,6 +9337,7 @@ class Renderer {
         this.exitsRendered = {};
         this.defualtColor = new paper.Color(this.colors.default[0] / 255, this.colors.default[1] / 255, this.colors.default[2] / 255);
         this.highlights = [];
+        this.path = [];
         this.render();
     }
 
@@ -9946,9 +9945,40 @@ class Renderer {
         this.highlights.push(highlight)
     }
 
-    clearHighlight(id) {
+    clearHighlight() {
         this.highlights.forEach((element) => element.remove());
         this.highlights = [];
+    }
+
+    renderPath(locations, color) {
+        this.overlayLayer.activate();
+        let group = new paper.Group()
+        locations.forEach(id => {
+            let room = this.area.getRoomById(id);
+            let startPoint = new paper.Point(room.x + this.roomFactor * 0.5, room.y + this.roomFactor * 0.5)
+            let exits = Object.values(room.exits).concat(Object.values(room.specialExits))
+            exits.forEach(exitRoomId => {
+                console.log(exitRoomId)
+                if (locations.indexOf(exitRoomId) > -1) {
+                    let exitRoom = this.area.getRoomById(exitRoomId);
+                    let endPoint = new paper.Point(exitRoom.x + this.roomFactor * 0.5, exitRoom.y + this.roomFactor * 0.5)
+                    let line = new paper.Path.Line(startPoint, endPoint)
+                    line.strokeWidth = this.exitFactor * 4;
+                    if (color === undefined) {
+                        color = [0.4, 0.9, 0.3];
+                    }
+                    line.strokeColor = new paper.Color(color[0], color[1], color[2]);
+                    this.path.push(line)
+                    group.addChild(line)
+                }
+            })
+        })
+        return group;
+    }
+
+    clearPath() {
+        this.path.forEach((element) => element.remove());
+        this.path = [];
     }
 
 
@@ -33176,8 +33206,6 @@ if (searchNpcsField && searchNpcsField.autoComplete) {
     }
   });
   searchNpcsField.on("autocomplete.select", function (evt, item) {
-    console.log(item);
-
     if (item.value instanceof Function) {
       item.value();
       evt.preventDefault();
