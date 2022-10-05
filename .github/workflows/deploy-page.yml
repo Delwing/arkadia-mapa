@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - run: yarn --cwd action
-      - run: node action/index.js
+      - run: node action/page.js
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact

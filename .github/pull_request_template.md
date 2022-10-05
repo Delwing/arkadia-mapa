@@ -1,0 +1,1 @@
+<!-- Koniecznie wpisz liste zmian! -->

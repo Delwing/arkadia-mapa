@@ -1,0 +1,18 @@
+on: [pull_request, workflow_dispatch]
+
+jobs:
+  map-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create DIFF
+        id: diff
+        uses: Delwing/mudlet-map-diff-action@master
+        with:
+          old-map: map_master3.dat
+          reuse-comments: true
+        env:
+          CLOUDINARY_NAME: ${{ secrets.CLOUDINARY_NAME }}
+          CLOUDINARY_KEY: ${{ secrets.CLOUDINARY_KEY }}
+          CLOUDINARY_SECRET: ${{ secrets.CLOUDINARY_SECRET }}
