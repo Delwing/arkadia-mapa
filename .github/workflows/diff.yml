@@ -1,3 +1,5 @@
+name: Create diff
+
 on: [pull_request, workflow_dispatch]
 
 jobs:
