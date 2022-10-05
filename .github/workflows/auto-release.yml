@@ -36,7 +36,7 @@ jobs:
           use_github_release_notes: true
           tag_prefix: ""
           release_name: "Release <RELEASE_VERSION>"
-      - run: node process.js ${{ steps.release.outputs.tag_name }}
+      - run: node action/process.js ${{ steps.release.outputs.tag_name }}
         id: process_map
       - name: Upload process map file to release
         uses: svenstaro/upload-release-action@v2
