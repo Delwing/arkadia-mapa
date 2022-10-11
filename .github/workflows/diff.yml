@@ -10,10 +10,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Create DIFF
         id: diff
-        uses: Delwing/mudlet-map-diff-action@master
+        uses: Delwing/mudlet-map-diff-action@v4
         with:
           old-map: map_master3.dat
-          reuse-comments: true
+          reuse-comment: true
         env:
           CLOUDINARY_NAME: ${{ secrets.CLOUDINARY_NAME }}
           CLOUDINARY_KEY: ${{ secrets.CLOUDINARY_KEY }}
