@@ -8,7 +8,7 @@ jobs:
       map_changed: ${{ steps.check_file_changed.outputs.map_changed }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 2
       - shell: pwsh
