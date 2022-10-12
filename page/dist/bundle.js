@@ -22,17 +22,6 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var _require = require("./preview"),
     Preview = _require.Preview;
 
-function replace(tag, controls) {
-  (0, _versions.downloadVersion)(tag).then(function (data) {
-    controls.reader = new _mudletMapRenderer.MapReader(data, colors);
-    controls.populateSelectBox();
-    controls.renderArea(controls.areaId, controls.zIndex, true).then(function () {
-      return controls.showToast("Przeladowano wersje.");
-    });
-  });
-}
-
-window.replace = replace;
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
@@ -114,6 +103,7 @@ var PageControls = /*#__PURE__*/function () {
     this.zoomBar = jQuery(".progress-container");
     this.settingsModal = jQuery("#settings");
     this.settingsForm = jQuery("#settings form");
+    this.version = jQuery(".versions");
     this.settings = new _mudletMapRenderer.Settings();
     this.preview = new Preview(this.map);
     this.zIndex = 0;
@@ -125,6 +115,14 @@ var PageControls = /*#__PURE__*/function () {
 
     jQuery(".btn").on("click", function () {
       jQuery(this).blur();
+    });
+    this.version.on('click', '.tag', function (event) {
+      event.preventDefault();
+      console.log(event.target);
+
+      _this.replaceVersion(jQuery(event.target).attr('data-tag'));
+
+      _this.helpModal.modal("hide");
     });
     this.levels.on("click", ".btn-level", function (event) {
       event.preventDefault();
@@ -697,12 +695,33 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "showHelp",
     value: function showHelp() {
+      var _this7 = this;
+
       this.helpModal.modal("show");
+
+      if (this.version.children().length == 0) {
+        (0, _versions.downloadTags)().then(function (tags) {
+          tags.forEach(function (tag) {
+            _this7.version.append("<a class=\"tag\" href=\"#\" data-tag=".concat(tag, ">").concat(tag, "</a><br>"));
+          });
+        });
+      }
     }
   }, {
     key: "showSearch",
     value: function showSearch() {
       this.searchModal.modal("show");
+    }
+  }, {
+    key: "replaceVersion",
+    value: function replaceVersion(tag) {
+      (0, _versions.downloadVersion)(tag).then(function (data) {
+        controls.reader = new _mudletMapRenderer.MapReader(data, colors);
+        controls.populateSelectBox();
+        controls.renderArea(controls.areaId, controls.zIndex, true).then(function () {
+          return controls.showToast("Przeladowano wersje na ".concat(tag, "."));
+        });
+      });
     }
   }]);
 
@@ -33362,9 +33381,29 @@ module.exports = {
 
 var https = require("https");
 
+var downloadTags = function downloadTags() {
+  return new Promise(function (resolve, reject) {
+    https.get("https://api.github.com/repos/Delwing/arkadia-mapa/releases", function (res) {
+      var data = [];
+      res.on("data", function (chunk) {
+        data.push(chunk);
+      });
+      res.on("error", function (err) {
+        return reject(err);
+      });
+      res.on("end", function () {
+        var response = JSON.parse(Buffer.concat(data).toString());
+        resolve(response.map(function (release) {
+          return release.tag_name;
+        }));
+      });
+    });
+  });
+};
+
 var downloadVersion = function downloadVersion(tag) {
   return new Promise(function (resolve, reject) {
-    https.get("https://github.com/Delwing/arkadia-mapa/releases/download/".concat(tag, "/mapExport.json"), function (res) {
+    https.get("https://arkadia-mapa.delwing.workers.dev/?tag=".concat(tag), function (res) {
       var data = [];
       res.on("data", function (chunk) {
         data.push(chunk);
@@ -33381,7 +33420,8 @@ var downloadVersion = function downloadVersion(tag) {
 };
 
 module.exports = {
-  downloadVersion: downloadVersion
+  downloadVersion: downloadVersion,
+  downloadTags: downloadTags
 };
 
 }).call(this)}).call(this,require("buffer").Buffer)
