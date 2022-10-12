@@ -3,6 +3,8 @@
 
 var _mudletMapRenderer = require("mudlet-map-renderer");
 
+var _versions = require("./versions");
+
 var _npc = require("./npc");
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
@@ -20,6 +22,17 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 var _require = require("./preview"),
     Preview = _require.Preview;
 
+function replace(tag, controls) {
+  (0, _versions.downloadVersion)(tag).then(function (data) {
+    controls.reader = new _mudletMapRenderer.MapReader(data, colors);
+    controls.populateSelectBox();
+    controls.renderArea(controls.areaId, controls.zIndex, true).then(function () {
+      return controls.showToast("Przeladowano wersje.");
+    });
+  });
+}
+
+window.replace = replace;
 var urlSearchParams = new URLSearchParams(window.location.search);
 var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
@@ -162,6 +175,27 @@ var PageControls = /*#__PURE__*/function () {
   }
 
   _createClass(PageControls, [{
+    key: "init",
+    value: function init() {
+      var area = 37;
+      var zIndex = 0;
+
+      if (params.loc) {
+        this.findRoom(params.loc);
+        history.replaceState(null, null, url);
+      } else {
+        if (params.area) {
+          area = params.area;
+          history.replaceState(null, null, url);
+        } else if (position !== null && position.area) {
+          area = position.area;
+          zIndex = position.zIndex;
+        }
+
+        this.renderArea(area, zIndex);
+      }
+    }
+  }, {
     key: "handleSaveSettings",
     value: function handleSaveSettings() {
       var inputs = this.settingsModal.find("input");
@@ -217,19 +251,21 @@ var PageControls = /*#__PURE__*/function () {
           }));
           jQuery("body").css("background", _this2.settings.mapBackground);
 
-          var _area = _this2.reader.getArea(areaId, zIndex);
+          var area = _this2.reader.getArea(areaId, zIndex);
 
           if (_this2.renderer) {
             _this2.renderer.clear();
           }
 
-          _this2.renderer = new _mudletMapRenderer.Renderer(_this2.map, _this2.reader, _area, _this2.reader.getColors(), _this2.settings);
+          _this2.renderer = new _mudletMapRenderer.Renderer(_this2.map, _this2.reader, area, _this2.reader.getColors(), _this2.settings);
 
           _this2.select.val(areaId);
 
-          _this2.populateLevelButtons(_area.getLevels(), zIndex);
+          _this2.populateLevelButtons(area.getLevels(), zIndex);
 
           _this2.hideRoomInfo();
+
+          _this2.renderer.clearHighlight();
 
           if (_this2.settings.keepZoomLevel && _this2.zoom) {
             _this2.renderer.controls.setZoom(_this2.zoom);
@@ -312,6 +348,7 @@ var PageControls = /*#__PURE__*/function () {
     value: function populateSelectBox() {
       var _this3 = this;
 
+      this.select.empty();
       this.reader.getAreas().forEach(function (areaElement, index) {
         if (!areaElement.rooms.length) {
           return;
@@ -338,7 +375,7 @@ var PageControls = /*#__PURE__*/function () {
         var roomId = formData.roomId;
 
         if (isNaN(roomId)) {
-          roomId = (0, _npc.findNpc)(roomId);
+          roomId = (0, _npc.findNpc)(roomId)[0];
         }
 
         this.findRoom(parseInt(roomId));
@@ -376,9 +413,11 @@ var PageControls = /*#__PURE__*/function () {
         this.renderArea(area.areaId, area.zIndex).then(function () {
           _this5.renderer.controls.setZoom(1);
 
-          var group = _this5.renderer.renderPath(rooms, [1, 0.2, 0]);
+          rooms.forEach(function (room) {
+            _this5.renderer.renderHighlight(room);
+          });
 
-          _this5.renderer.controls.centerOnItem(group);
+          _this5.renderer.controls.centerOnItem(new paper.Group(_this5.renderer.highlights));
         });
       } else {
         this.showToast("Nie znaleziono takiej lokacji");
@@ -484,9 +523,8 @@ var PageControls = /*#__PURE__*/function () {
       var destRoom = this.reader.getRoomById(id);
 
       if (parseInt(destRoom.areaId) !== this.renderer.area.areaId) {
-        var _area2 = this.reader.getAreaProperties(destRoom.areaId);
-
-        areaLink = " ->  " + '<a href="#" data-room="' + destRoom.id + '">' + _area2.areaName + "</a>";
+        var area = this.reader.getAreaProperties(destRoom.areaId);
+        areaLink = " ->  " + '<a href="#" data-room="' + destRoom.id + '">' + area.areaName + "</a>";
       }
 
       return "<li>" + this.translateDir(exit) + " : " + '<a href="#" data-room="' + id + '">' + id + "</a>" + areaLink + "</li>";
@@ -675,24 +713,7 @@ var controls = new PageControls(new _mudletMapRenderer.MapReader(mapData, colors
 window.controls = controls;
 controls.genericSetup();
 controls.populateSelectBox();
-var area = 37;
-var zIndex = 0;
-
-if (params.loc) {
-  controls.findRoom(params.loc);
-  history.replaceState(null, null, url);
-} else {
-  if (params.area) {
-    area = params.area;
-    history.replaceState(null, null, url);
-  } else if (position !== null && position.area) {
-    area = position.area;
-    zIndex = position.zIndex;
-  }
-
-  controls.renderArea(area, zIndex);
-}
-
+controls.init();
 controls.registerKeyBoard();
 var dirs = {
   north: "n",
@@ -720,7 +741,7 @@ function dirsShortToLong(dir) {
   return result !== undefined ? result : dir;
 }
 
-},{"./npc":47,"./preview":48,"mudlet-map-renderer":12}],2:[function(require,module,exports){
+},{"./npc":47,"./preview":48,"./versions":49,"mudlet-map-renderer":12}],2:[function(require,module,exports){
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -33126,7 +33147,7 @@ var downloadNpc = function downloadNpc() {
           }
 
           roomNpc[npc.loc].push(npc.name);
-          npcs[npc.name] = npc.loc;
+          npcs[npc.name] = npcs[npc.name] ? npcs[npc.name].concat([npc.loc]) : [npc.loc];
         });
         resolve(roomNpc);
       });
@@ -33335,4 +33356,33 @@ module.exports = {
   Preview: Preview
 };
 
-},{"paper":17}]},{},[1]);
+},{"paper":17}],49:[function(require,module,exports){
+(function (Buffer){(function (){
+"use strict";
+
+var https = require("https");
+
+var downloadVersion = function downloadVersion(tag) {
+  return new Promise(function (resolve, reject) {
+    https.get("https://github.com/Delwing/arkadia-mapa/releases/download/".concat(tag, "/mapExport.json"), function (res) {
+      var data = [];
+      res.on("data", function (chunk) {
+        data.push(chunk);
+      });
+      res.on("error", function (err) {
+        return reject(err);
+      });
+      res.on("end", function () {
+        var response = JSON.parse(Buffer.concat(data).toString());
+        resolve(response);
+      });
+    });
+  });
+};
+
+module.exports = {
+  downloadVersion: downloadVersion
+};
+
+}).call(this)}).call(this,require("buffer").Buffer)
+},{"buffer":6,"https":9}]},{},[1]);
