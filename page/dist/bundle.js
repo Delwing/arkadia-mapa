@@ -720,7 +720,7 @@ var PageControls = /*#__PURE__*/function () {
         _this7.populateSelectBox();
 
         _this7.renderArea(controls.areaId, controls.zIndex, true).then(function () {
-          return _this7.showToast("Przeladowano wersje na ".concat(tag));
+          return _this7.showToast("Prze\u0142adowano wersj\u0119 na ".concat(tag));
         });
 
         _this7.versionBadge.html("v".concat(tag));
