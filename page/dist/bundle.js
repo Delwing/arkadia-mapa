@@ -106,6 +106,7 @@ var PageControls = /*#__PURE__*/function () {
     this.versions = jQuery("#versions");
     this.settings = new _mudletMapRenderer.Settings();
     this.preview = new Preview(this.map);
+    this.versionBadge = jQuery(".version-number");
     this.zIndex = 0;
     var loaded = localStorage.getItem("settings");
 
@@ -711,12 +712,20 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "replaceVersion",
     value: function replaceVersion(tag) {
+      var _this7 = this;
+
       (0, _versions.downloadVersion)(tag, this.versions.attr('data-files')).then(function (data) {
-        controls.reader = new _mudletMapRenderer.MapReader(data, colors);
-        controls.populateSelectBox();
-        controls.renderArea(controls.areaId, controls.zIndex, true).then(function () {
-          return controls.showToast("Przeladowano wersje na ".concat(tag, "."));
+        _this7.reader = new _mudletMapRenderer.MapReader(data, colors);
+
+        _this7.populateSelectBox();
+
+        _this7.renderArea(controls.areaId, controls.zIndex, true).then(function () {
+          return _this7.showToast("Przeladowano wersje na ".concat(tag));
         });
+
+        _this7.versionBadge.html("v".concat(tag));
+
+        _this7.versionBadge.toggle(true);
       });
     }
   }]);

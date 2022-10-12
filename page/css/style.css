@@ -108,7 +108,7 @@ canvas {
     margin: 0 10px;
 }
 
-button.control span {
+button.control > span {
     padding-left: 10px;
 }
 
@@ -237,6 +237,14 @@ h2 a, h2 a:hover {
 
 #versions {
     width: 100px;
+}
+
+.btn .badge {
+    top: 0;
+}
+
+.version-number {
+    display: none;
 }
 
 @media all and (max-width: 1400px) {
