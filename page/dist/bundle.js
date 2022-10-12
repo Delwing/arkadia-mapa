@@ -103,7 +103,7 @@ var PageControls = /*#__PURE__*/function () {
     this.zoomBar = jQuery(".progress-container");
     this.settingsModal = jQuery("#settings");
     this.settingsForm = jQuery("#settings form");
-    this.version = jQuery(".versions");
+    this.versions = jQuery("#versions");
     this.settings = new _mudletMapRenderer.Settings();
     this.preview = new Preview(this.map);
     this.zIndex = 0;
@@ -116,11 +116,8 @@ var PageControls = /*#__PURE__*/function () {
     jQuery(".btn").on("click", function () {
       jQuery(this).blur();
     });
-    this.version.on('click', '.tag', function (event) {
-      event.preventDefault();
-      console.log(event.target);
-
-      _this.replaceVersion(jQuery(event.target).attr('data-tag'));
+    this.versions.on('change', function (event) {
+      _this.replaceVersion(jQuery(event.target).val());
 
       _this.helpModal.modal("hide");
     });
@@ -156,6 +153,15 @@ var PageControls = /*#__PURE__*/function () {
       _this.populateSettings();
 
       _this.settingsModal.find("input").first().focus();
+    });
+    this.helpModal.on("shown.bs.modal", function () {
+      if (_this.versions.children().length == 0) {
+        (0, _versions.downloadTags)().then(function (tags) {
+          tags.forEach(function (tag) {
+            _this.versions.append("<option value=".concat(tag, ">").concat(tag, "</option>"));
+          });
+        });
+      }
     });
     this.settingsForm.on("submit", function (event) {
       event.preventDefault();
@@ -695,17 +701,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "showHelp",
     value: function showHelp() {
-      var _this7 = this;
-
       this.helpModal.modal("show");
-
-      if (this.version.children().length == 0) {
-        (0, _versions.downloadTags)().then(function (tags) {
-          tags.forEach(function (tag) {
-            _this7.version.append("<a class=\"tag\" href=\"#\" data-tag=".concat(tag, ">").concat(tag, "</a><br>"));
-          });
-        });
-      }
     }
   }, {
     key: "showSearch",

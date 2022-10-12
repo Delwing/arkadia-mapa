@@ -235,6 +235,10 @@ h2 a, h2 a:hover {
     backdrop-filter: blur(3px) brightness(60%);
 }
 
+#versions {
+    width: 100px;
+}
+
 @media all and (max-width: 1400px) {
     button.control span {
         display: none;
