@@ -156,7 +156,7 @@ var PageControls = /*#__PURE__*/function () {
     });
     this.helpModal.on("shown.bs.modal", function () {
       if (_this.versions.children().length == 0) {
-        (0, _versions.downloadTags)().then(function (tags) {
+        (0, _versions.downloadTags)(_this.versions.attr("data-tags")).then(function (tags) {
           tags.forEach(function (tag) {
             _this.versions.append("<option value=".concat(tag, ">").concat(tag, "</option>"));
           });
@@ -711,7 +711,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "replaceVersion",
     value: function replaceVersion(tag) {
-      (0, _versions.downloadVersion)(tag).then(function (data) {
+      (0, _versions.downloadVersion)(tag, this.versions.attr('data-files')).then(function (data) {
         controls.reader = new _mudletMapRenderer.MapReader(data, colors);
         controls.populateSelectBox();
         controls.renderArea(controls.areaId, controls.zIndex, true).then(function () {
@@ -33377,9 +33377,9 @@ module.exports = {
 
 var https = require("https");
 
-var downloadTags = function downloadTags() {
+var downloadTags = function downloadTags(url) {
   return new Promise(function (resolve, reject) {
-    https.get("https://api.github.com/repos/Delwing/arkadia-mapa/releases", function (res) {
+    https.get(url, function (res) {
       var data = [];
       res.on("data", function (chunk) {
         data.push(chunk);
@@ -33397,9 +33397,9 @@ var downloadTags = function downloadTags() {
   });
 };
 
-var downloadVersion = function downloadVersion(tag) {
+var downloadVersion = function downloadVersion(tag, address) {
   return new Promise(function (resolve, reject) {
-    https.get("https://arkadia-mapa.delwing.workers.dev/?tag=".concat(tag), function (res) {
+    https.get(address.replace('%tag%', tag), function (res) {
       var data = [];
       res.on("data", function (chunk) {
         data.push(chunk);
