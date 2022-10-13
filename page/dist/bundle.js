@@ -231,7 +231,7 @@ var PageControls = /*#__PURE__*/function () {
   }, {
     key: "render",
     value: function render(force) {
-      this.renderArea(this.select.val(), this.zIndex, force);
+      return this.renderArea(this.select.val(), this.zIndex, force);
     }
   }, {
     key: "renderArea",
@@ -644,6 +644,9 @@ var PageControls = /*#__PURE__*/function () {
 
           _this6.showSearch();
         }
+      });
+      window.addEventListener("resize", function () {
+        _this6.render(true);
       });
       window.addEventListener("keydown", function (event) {
         if (jQuery("input").is(":focus") || _this6.settings.disableKeyBinds) {
