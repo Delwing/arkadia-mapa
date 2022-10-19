@@ -1,0 +1,17 @@
+name: Remove branch on PR close
+
+on: 
+  pull_request:
+    types: [closed]
+    branches: [develop]
+  
+
+jobs:
+  map-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete PRs head branches
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{github.token}}
+          branches: develop
