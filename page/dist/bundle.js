@@ -24147,8 +24147,8 @@ var params = Object.fromEntries(urlSearchParams.entries());
 var url = window.location.origin + window.location.pathname;
 
 var svgToDataURL = function svgToDataURL(svgStr) {
-  var encoded = encodeURIComponent(svgStr).replace(/'/g, '%27').replace(/"/g, '%22');
-  var header = 'data:image/svg+xml,';
+  var encoded = encodeURIComponent(svgStr).replace(/'/g, "%27").replace(/"/g, "%22");
+  var header = "data:image/svg+xml,";
   var dataUrl = header + encoded;
   return dataUrl;
 };
@@ -24239,7 +24239,7 @@ var PageControls = /*#__PURE__*/function () {
     jQuery(".btn").on("click", function () {
       jQuery(this).blur();
     });
-    this.versions.on('change', function (event) {
+    this.versions.on("change", function (event) {
       _this.replaceVersion(jQuery(event.target).val());
 
       _this.helpModal.modal("hide");
@@ -24479,7 +24479,11 @@ var PageControls = /*#__PURE__*/function () {
       this.reader.getAreas().filter(function (area) {
         return area.rooms.length > 0;
       }).sort(function (a, b) {
-        return a.areaNamee - b.areaName;
+        var nameA = a.areaName.toLowerCase(),
+            nameB = b.areaName.toLowerCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
       }).forEach(function (areaElement, index) {
         if (!areaElement.rooms.length) {
           return;
@@ -24847,7 +24851,7 @@ var PageControls = /*#__PURE__*/function () {
     value: function replaceVersion(tag) {
       var _this7 = this;
 
-      (0, _versions.downloadVersion)(tag, this.versions.attr('data-files')).then(function (data) {
+      (0, _versions.downloadVersion)(tag, this.versions.attr("data-files")).then(function (data) {
         _this7.reader = new _mudletMapRenderer.MapReader(data, colors);
 
         _this7.populateSelectBox();
