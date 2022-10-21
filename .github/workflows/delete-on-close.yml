@@ -3,7 +3,7 @@ name: Remove branch on PR close
 on: 
   pull_request:
     types: [closed]
-    branches: [develop]
+    branches: [development]
   
 
 jobs:
@@ -14,4 +14,4 @@ jobs:
         uses: dawidd6/action-delete-branch@v3
         with:
           github_token: ${{github.token}}
-          branches: develop
+          branches: development
