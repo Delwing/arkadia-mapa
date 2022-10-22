@@ -910,6 +910,7 @@ class Renderer {
                 }
             })
         })
+        group.locked = true;
         return group;
     }
 
@@ -24248,11 +24249,24 @@ var PageControls = /*#__PURE__*/function () {
     jQuery(".btn").on("click", function () {
       jQuery(this).blur();
     });
-    this.versions.on("change", function (event) {
-      _this.replaceVersion(jQuery(event.target).val());
 
-      _this.helpModal.modal("hide");
-    });
+    if (this.versions.length > 0) {
+      this.versions.on("change", function (event) {
+        _this.replaceVersion(jQuery(event.target).val());
+
+        _this.helpModal.modal("hide");
+      });
+      this.helpModal.on("shown.bs.modal", function () {
+        if (_this.versions.children().length == 0) {
+          (0, _versions.downloadTags)(_this.versions.attr("data-tags")).then(function (tags) {
+            tags.forEach(function (tag) {
+              _this.versions.append("<option value=".concat(tag, ">").concat(tag, "</option>"));
+            });
+          });
+        }
+      });
+    }
+
     this.levels.on("click", ".btn-level", function (event) {
       event.preventDefault();
       var zIndex = parseInt(jQuery(event.target).attr("data-level"));
@@ -24285,15 +24299,6 @@ var PageControls = /*#__PURE__*/function () {
       _this.populateSettings();
 
       _this.settingsModal.find("input").first().focus();
-    });
-    this.helpModal.on("shown.bs.modal", function () {
-      if (_this.versions.children().length == 0) {
-        (0, _versions.downloadTags)(_this.versions.attr("data-tags")).then(function (tags) {
-          tags.forEach(function (tag) {
-            _this.versions.append("<option value=".concat(tag, ">").concat(tag, "</option>"));
-          });
-        });
-      }
     });
     this.settingsForm.on("submit", function (event) {
       event.preventDefault();
@@ -24486,7 +24491,7 @@ var PageControls = /*#__PURE__*/function () {
 
       this.select.empty();
       this.reader.getAreas().filter(function (area) {
-        return area.rooms.length > 0;
+        return area.rooms.length > 0 && area.areaName !== undefined && area.areaName !== "";
       }).sort(function (a, b) {
         var nameA = a.areaName.toLowerCase(),
             nameB = b.areaName.toLowerCase();
