@@ -25,6 +25,10 @@ h2 {
     top: 5px;
 }
 
+a {
+    text-decoration: none;
+}
+
 .logo {
     position: absolute;
     left: -37px;
