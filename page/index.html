@@ -15,7 +15,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
     <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="css/bootstrap.dark.min.css" rel="stylesheet" type="text/css">
-    <link href="css/choices.min.css" rel="stylesheet" type="text/css">
     <link href="css/translations.css" rel="stylesheet" type="text/css">
     <link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
@@ -174,10 +173,20 @@
                         <label for="linesColor" class="form-label" data-i18n="line-color">Kolor linii</label>
                         <input type="color" class="form-control form-control-color" id="linesColor" name="linesColor" value="#ffffff" title="Wybierz kolor linii">
                     </div>
-                    <div class="form-check">
+                    <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" name="transparentLabels" value="1" id="transparentLabels-check">
                         <label class="form-check-label" for="transparentLabels-check" data-i18n="transparent-labels">
                             Przezroczyste tło etykiet
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="linesColor" class="form-label" data-i18n="line-color">Kolor linii</label>
+                        <input type="color" class="form-control form-control-color" id="linesColor" name="linesColor" value="#ffffff" title="Wybierz kolor linii">
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="optimizeDrag" value="1" id="optimize-drag">
+                        <label class="form-check-label" for="optimize-drag" data-i18n="optimize-drag">
+                            Optymalizacja przesuwania mapy
                         </label>
                     </div>
                 </div>
