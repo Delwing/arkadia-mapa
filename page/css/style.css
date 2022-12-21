@@ -13,6 +13,7 @@ body {
     padding: 10px;
     background: #000;
     overflow: hidden;
+    font-size: 14px;
 }
 
 h2 {
@@ -44,6 +45,10 @@ header {
 
 .left-header {
     display: flex
+}
+
+.map-controls {
+    display: flex;
 }
 
 .map-container {
@@ -139,8 +144,8 @@ button.control > span {
     margin-top: 2px;
     margin-bottom: -5px;
     z-index: 99;
-    display: none;
     width: 100%;
+    opacity: 0;
 }
 
 .progress {
@@ -245,6 +250,39 @@ h2 a, h2 a:hover {
 
 .version-number {
     display: none;
+}
+
+mark {
+    background: none;
+    color: inherit;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.npc-autocomplete {
+    top: 90px;
+    left: 1rem;
+    right: 1rem;
+}
+
+.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 1s linear;
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 1s, opacity 1s linear;
+}
+
+.btn-check:focus+.btn-secondary, .btn-secondary:focus {
+    box-shadow: none;
+}
+
+.area-form {
+    width: 200px;
 }
 
 @media all and (max-width: 1400px) {
