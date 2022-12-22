@@ -52,5 +52,10 @@
     "switch-map-version": "Switch map version:",
     "remark": "Map was created by many authors from Arkadia's communities in project under lead of <b>dzordzyk</b>",
     "no-clipboard": "Your browser does not support clipboard",
-    "location-not-found": "Nie znaleziono takiej lokacji"
+    "location-not-found": "Nie znaleziono takiej lokacji",
+    "minimap": "Minimap",
+    "page-theme": "Page theme",
+    "optimize-drag": "Optimize drag",
+    "map": "Map",
+    "page": "Page"
 }
