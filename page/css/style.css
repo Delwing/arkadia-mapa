@@ -29,6 +29,10 @@ a {
     text-decoration: none;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 .logo {
     position: absolute;
     left: -37px;
