@@ -121,7 +121,7 @@ canvas {
     margin: 0 10px;
 }
 
-button .control > span,
+button.control > span,
 .control button > span {
     padding-left: 10px;
 }
@@ -299,7 +299,7 @@ mark {
 }
 
 @media all and (max-width: 1400px) {
-    button.control span {
+    button.control span, .control button > span {
         display: none;
     }
 }
