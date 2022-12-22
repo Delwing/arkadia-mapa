@@ -121,7 +121,8 @@ canvas {
     margin: 0 10px;
 }
 
-button .control > span {
+button .control > span,
+.control button > span {
     padding-left: 10px;
 }
 
