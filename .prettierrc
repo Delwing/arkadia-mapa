@@ -5,5 +5,5 @@
     "semi": true,
     "singleQuote": false,
     "arrowParens": "avoid",
-    "bracketSpacing":false
+    "bracketSpacing": false
 }
