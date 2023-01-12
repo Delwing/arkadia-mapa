@@ -47,7 +47,7 @@
                         <img src="images/download.svg" alt="Download" />
                         <span data-i18n="save">Zapisz</span>
                     </button>
-                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
                         <span class="visually-hidden">Dropdown</span>
                     </button>
                     <ul class="dropdown-menu">
@@ -55,17 +55,29 @@
                         <li><a class="dropdown-item save-image-svg" href="#" data-i18n="save-svg">Zapisz jako SVG</a></li>
                     </ul>
                 </div>
-                <button class="control search btn btn-secondary" data-bs-toggle="modal" data-bs-target="#search" title="Szukaj">
-                    <img src="images/search.svg" alt="search" />
-                    <span data-i18n="search">Szukaj</span>
-                </button>
+                <div class="btn-group control">
+                    <button class="search btn btn-secondary" data-bs-toggle="modal" data-bs-target="#search" title="Szukaj">
+                        <img src="images/search.svg" alt="search" />
+                        <span data-i18n="search">Szukaj</span>
+                    </button>
+                    <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown">
+                        <span class="visually-hidden">Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item find-path" href="#" data-bs-toggle="modal" data-bs-target="#findpath" data-i18n="find-path">
+                                Wyznacz ścieżkę
+                            </a>
+                        </li>
+                    </ul>
+                </div>
                 <button class="control settings btn btn-secondary" data-bs-toggle="modal" data-bs-target="#settings" title="Ustawienia">
                     <img src="images/gear-fill.svg" alt="gear" />
                     <span data-i18n="settings">Ustawienia</span>
                 </button>
                 <button class="control help btn btn-secondary" data-bs-toggle="modal" data-bs-target="#help" title="Pomoc">
                     <img src="images/question-circle.svg" alt="question" />
-                    <span><span data-i18n="help">Pomoc</span> <span class="badge badge-secondary version-number"></span></span>
+                    <span><span data-i18n="help">Pomoc</span> <span class="badge bg-secondary version-number"></span></span>
                 </button>
                 <div class="dropdown lang-dropdown">
                     <button class="btn btn-secondary dropdown-toggle lang-label" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
@@ -97,6 +109,31 @@
                                     data-npc="https://delwing.github.io/arkadia-mapa/data/npc.json"
                                     autocomplete="off"
                                 />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" data-i18n="search">Szukaj</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="findpath" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form class="findpath-form">
+                        <div class="modal-header">
+                            <h5 class="modal-title" data-i18n="find-path">Wyznacz ścieżkę</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label class="form-label" for="start-loc" data-i18n="start-loc">Lokacja startowa:</label>
+                                <input class="form-control" type="number" id="start-loc" name="start-loc" required/>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="end-loc" data-i18n="end-loc">Lokacja docelowa:</label>
+                                <input class="form-control" type="number" id="end-loc" name="end-loc" required/>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -352,10 +389,14 @@
                     <ul></ul>
                 </div>
             </div>
+            <div class="path-box card opacity-75 invisible">
+                <div class="card-header" data-i18n="paths">Ścieżki</div>
+                <ul class="list-group list-group-flush"></ul>
+            </div>
             <canvas id="map" resize="true"></canvas>
             <script src="data/mapExport.js"></script>
             <script src="data/colors.js"></script>
-            <script src="js/bundle.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.0.3/dist/bundle.min.js"></script>
             <script src="js/page.js"></script>
         </div>
     </body>

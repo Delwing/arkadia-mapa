@@ -298,6 +298,26 @@ mark {
     margin-left: 10px;
 }
 
+.path-box {
+    width: 18rem;
+    margin-top: 10px;
+    position: absolute;
+    bottom: 10px;
+}
+
+.path-box .badge {
+    cursor: pointer;
+}
+
+.path-box .badge:hover {
+    opacity: 0.75;
+}
+
+.small-color {
+    height: 1em;
+    border: 0;
+}
+
 @media all and (max-width: 1400px) {
     button.control span, .control button > span {
         display: none;

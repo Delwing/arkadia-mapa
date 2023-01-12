@@ -58,5 +58,11 @@
     "optimize-drag": "Optimize drag",
     "map": "Map",
     "page": "Page",
-    "defaults": "Defaults"
+    "defaults": "Defaults",
+    "find-path": "Find path",
+    "start-loc": "Start location:",
+    "end-loc": "Destination:",
+    "paths" : "Paths",
+    "delete": "Delete",
+    "no-path": "Could not find path"
 }

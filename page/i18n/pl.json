@@ -12,5 +12,7 @@
     "copied": "Skopiowana do schowka",
     "no-clipboard": "Twoja przeglądarka nie wspiera kopiowania do schowka",
     "settings-saved": "Ustawienia zapisane",
-    "location-not-found" : "Nie znaleziono takiej lokacji"
+    "location-not-found" : "Nie znaleziono takiej lokacji",
+    "delete": "Usuń",
+    "no-path": "Nie udało się znaleźć ścieżki"
 }
