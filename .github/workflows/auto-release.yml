@@ -19,13 +19,13 @@ jobs:
           $SourceDiff = $diff | Where-Object { $_ -match '^map_master3.dat$' }
           $HasDiff = $SourceDiff.Length -gt 0
 
-          Write-Host "::set-output name=map_changed::$HasDiff"
+          echo "map_changed=>$HasDiff" >> $GITHUB_OUTPUT
   process-map:
     runs-on: ubuntu-latest
     needs: [ check-map-change ]
     if: needs.check-map-change.outputs.map_changed == 'True'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: yarn --cwd action
       - id: release
         name: Bump version and release
