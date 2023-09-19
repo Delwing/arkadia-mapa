@@ -35,6 +35,11 @@
                     <span class="levels-container">
                         <span class="control levels btn-group btn-group-toggle"></span>
                     </span>
+                    <span class="control">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#area-info">
+                            <img src="images/info-circle.svg" alt="Area info"/>
+                        </button>
+                    </span>
                 </div>
             </div>
             <div class="controls flex-wrap btn-toolbar">
@@ -90,6 +95,27 @@
                 </div>
             </div>
         </header>
+        <div class="modal fade" id="area-info" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form class="search-form">
+                        <div class="modal-header">
+                            <h5 class="modal-title area-name"></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                <span data-i18n="room-count">Ilość lokacji</span>: <span class="area-room-count"></span>
+                            </p>
+                            <p>
+                                Wyjścia:
+                                <ul class="area-exits"></ul>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="search" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -396,7 +422,7 @@
             <canvas id="map" resize="true"></canvas>
             <script src="data/mapExport.js"></script>
             <script src="data/colors.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.0.7/dist/bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.0.8/dist/bundle.min.js"></script>
             <script src="js/page.js"></script>
         </div>
     </body>

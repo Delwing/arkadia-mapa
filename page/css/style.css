@@ -78,7 +78,7 @@ form {
     position: absolute;
     top: 85px;
     left: 15px;
-    width: 500px;
+    width: 620px;
     color: #2d2d2d;
     padding: 10px 20px;
     display: none;
@@ -90,8 +90,26 @@ form {
     color: #174762;
 }
 
+.info-box ul {
+    padding-left: 15px;
+}
+
 .info-box li {
     list-style-type: none;
+}
+
+.user-data p {
+    margin-bottom: 5px;
+}
+
+.user-data p + p  {
+    margin-left: 10px;
+}
+
+.user-data .value {
+    white-space: pre;
+    font-size: 0.85em;
+    font-family: Courier, monospace;
 }
 
 canvas {
