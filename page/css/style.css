@@ -12,7 +12,6 @@ body {
 
 body {
     padding: 10px;
-    background: #000;
     overflow: hidden;
     font-size: 14px;
 }
@@ -24,6 +23,7 @@ h2 {
     position: relative;
     font-size: 23px;
     top: 5px;
+    color: #ffffff;
 }
 
 a {
@@ -43,7 +43,7 @@ a:hover {
 
 header {
     border-bottom: 1px solid #cbcbcb;
-    padding: 20px;
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     height: 75px;
@@ -53,10 +53,13 @@ header {
 
 .left-header {
     display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .map-controls {
     display: flex;
+    gap: 10px;
 }
 
 .map-container {
@@ -68,26 +71,25 @@ header {
     padding-top: 75px;
 }
 
+.flag {
+    display: inline-flex;
+    align-items: center;
+}
+
 form {
     display: inline-block;
 }
 
 .info-box {
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(var(--bs-light-rgb), 0.5);
     border-radius: 5px;
     position: absolute;
     top: 85px;
     left: 15px;
     width: 620px;
-    color: #2d2d2d;
     padding: 10px 20px;
     display: none;
-    font-weight: bold;
     backdrop-filter: blur(3px) brightness(60%);
-}
-
-.info-box a {
-    color: #174762;
 }
 
 .info-box ul {
@@ -107,7 +109,6 @@ form {
 }
 
 .user-data .value {
-    white-space: pre;
     font-size: 0.85em;
     font-family: Courier, monospace;
 }
@@ -127,16 +128,11 @@ canvas {
     text-align: center;
 }
 
-.levels .btn {
-    margin: 0 2px;
-}
-
 .controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
     justify-content: space-evenly;
-}
-
-.control {
-    margin: 0 10px;
 }
 
 button.control > span,
@@ -194,11 +190,7 @@ h2 a:hover {
     display: none;
 }
 
-.lang-label {
-    height: 100%;
-}
-
-.lang-dropdown .dropdown-toggle::after {
+.lang-label.dropdown-toggle::after {
     display: none;
 }
 
@@ -334,6 +326,16 @@ mark {
 .small-color {
     height: 1em;
     border: 0;
+}
+
+.release-description {
+    white-space: pre;
+    font-family: monospace;
+    border: 1px solid;
+    padding: 20px;
+    margin: 20px 3px;
+    color: #CCC;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 @media all and (max-width: 1400px) {
