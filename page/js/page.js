@@ -63,4 +63,3 @@ if (templateSelector) {
 }
 
 },{}]},{},[1]);
-, setThemeFromControls);, setThemeFromControls);
