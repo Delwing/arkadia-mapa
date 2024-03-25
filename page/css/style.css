@@ -112,6 +112,7 @@ form {
 .user-data .value {
     font-size: 0.85em;
     font-family: Courier, monospace;
+    white-space: pre-wrap;
 }
 
 canvas {
