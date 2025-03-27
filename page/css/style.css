@@ -112,6 +112,7 @@ form {
 .user-data .value {
     font-size: 0.85em;
     font-family: Courier, monospace;
+    white-space: pre;
 }
 
 canvas {
@@ -260,7 +261,7 @@ h2 a:hover {
 }
 
 #versions {
-    width: 100px;
+    width: fit-content;
 }
 
 .btn .badge {
