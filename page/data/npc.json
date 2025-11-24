@@ -2560,15 +2560,19 @@
     "loc": 6003
   },
   {
-    "loc": 26678,
-    "name": "Anevay Devandre"
+    "name": "Anevay Devandre",
+    "loc": 26678
   },
   {
-    "loc": 491,
-    "name": "Gabel Draik"
+    "name": "Gabel Draik",
+    "loc": 491
   },
   {
-    "loc": 10010,
-    "name": "Yancej Prosopon"
+    "name": "Yancej Prosopon",
+    "loc": 10010
+  },
+  {
+    "name": "Guarin Barillier",
+    "loc": 26686
   }
 ]
