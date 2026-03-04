@@ -223,11 +223,11 @@
                                 <div class="tab-pane fade show active" id="nav-map" role="tabpanel">
                                     <div class="mb-3">
                                         <label class="form-label" for="location-size" data-i18n="location-size">Wielkość lokacji</label>
-                                        <input class="form-control" type="number" id="location-size" name="roomSize" />
+                                        <input class="form-control" type="number" id="location-size" name="roomSize" step="0.05" min="0.1" max="3" />
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="exits-size" data-i18n="line-thickness">Grubość linii</label>
-                                        <input class="form-control" type="number" id="exits-size" name="exitsSize" />
+                                        <input class="form-control" type="number" id="exits-size" name="lineWidth" step="0.005" min="0" max="0.5" />
                                     </div>
                                     <div class="mb-3">
                                         <div class="form-check">
@@ -244,9 +244,25 @@
                                         </div>
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label" for="room-shape" data-i18n="room-shape">Kształt lokacji</label>
+                                        <select class="form-select" id="room-shape" name="roomShape">
+                                            <option value="rectangle" data-i18n="rectangle">Prostokąt</option>
+                                            <option value="roundedRectangle" data-i18n="rounded-rectangle">Zaokrąglony prostokąt</option>
+                                            <option value="circle" data-i18n="circle">Koło</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="label-render-mode" data-i18n="label-render-mode">Tryb etykiet</label>
+                                        <select class="form-select" id="label-render-mode" name="labelRenderMode">
+                                            <option value="image" data-i18n="label-image">Obraz</option>
+                                            <option value="data" data-i18n="label-data">Dane</option>
+                                            <option value="none" data-i18n="label-none">Brak</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="borders" value="1" id="borders-check" />
-                                            <label class="form-check-label" for="borders-check" data-i18n="location-borders"> Krawędzie lokacji </label>
+                                            <input class="form-check-input" type="checkbox" name="borders" value="1" id="borders-check" checked />
+                                            <label class="form-check-label" for="borders-check" data-i18n="location-borders">Krawędzie lokacji</label>
                                         </div>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="frameMode" value="1" id="frame-check" />
@@ -257,16 +273,12 @@
                                             <label class="form-check-label" for="emboss-check" data-i18n="emboss-locations"> Wypukłe lokacje </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="isRound" value="1" id="round-check" />
-                                            <label class="form-check-label" for="round-check" data-i18n="round-borders"> Okrągłe lokacje </label>
-                                        </div>
-                                        <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="areaName" value="1" id="area-check" />
                                             <label class="form-check-label" for="area-check" data-i18n="area-names"> Nazwy stref </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="showLabels" value="1" id="labels-check" />
-                                            <label class="form-check-label" for="labels-check" data-i18n="labels"> Etykiety </label>
+                                            <input class="form-check-input" type="checkbox" name="gridEnabled" value="1" id="grid-check" />
+                                            <label class="form-check-label" for="grid-check" data-i18n="grid">Siatka</label>
                                         </div>
                                     </div>
                                     <div class="mb-3">
@@ -277,19 +289,19 @@
                                                     type="color"
                                                     class="form-control form-control-color"
                                                     id="map-background"
-                                                    name="mapBackground"
+                                                    name="backgroundColor"
                                                     value="#000000"
                                                     title="Wybierz kolor tła"
                                                 />
                                             </div>
                                             <div class="col">
-                                                <label for="linesColor" class="form-label" data-i18n="line-color">Kolor linii</label>
+                                                <label for="lineColor" class="form-label" data-i18n="line-color">Kolor linii</label>
                                                 <input
                                                     type="color"
                                                     class="form-control form-control-color"
-                                                    id="linesColor"
-                                                    name="linesColor"
-                                                    value="#ffffff"
+                                                    id="lineColor"
+                                                    name="lineColor"
+                                                    value="#e1ffe1"
                                                     title="Wybierz kolor linii"
                                                 />
                                             </div>
@@ -300,10 +312,6 @@
                                         <label class="form-check-label" for="transparentLabels-check" data-i18n="transparent-labels">
                                             Przezroczyste tło etykiet
                                         </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="optimizeDrag" value="1" id="optimize-drag" />
-                                        <label class="form-check-label" for="optimize-drag" data-i18n="optimize-drag">Optymalizacja przesuwania mapy</label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="preview" value="1" id="preview-input" />
@@ -403,12 +411,8 @@
                 </div>
             </div>
             <div class="preview-container">
-                <div class="preview">
-                    <img alt="Preview" src="" class="preview-img" />
-                </div>
-                <div class="preview-pan-container">
-                    <div class="preview-pan"></div>
-                </div>
+                <div class="preview"></div>
+                <div class="preview-pan"></div>
             </div>
             <div class="info-box">
                 <p>
@@ -444,10 +448,10 @@
                 <div class="card-header" data-i18n="paths">Ścieżki</div>
                 <ul class="list-group list-group-flush"></ul>
             </div>
-            <canvas id="map" resize="true"></canvas>
+            <div id="map"></div>
             <script src="data/mapExport.js"></script>
             <script src="data/colors.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.0.13/dist/bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script/dist/index.min.js"></script>
             <script src="js/page.js"></script>
         </div>
     </body>
