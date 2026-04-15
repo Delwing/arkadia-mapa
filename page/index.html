@@ -256,6 +256,7 @@
                                         <select class="form-select" id="label-render-mode" name="labelRenderMode">
                                             <option value="image" data-i18n="label-image">Obraz</option>
                                             <option value="data" data-i18n="label-data">Dane</option>
+                                            <option value="data-transparent" data-i18n="label-data-transparent">Dane (przezroczyste)</option>
                                             <option value="none" data-i18n="label-none">Brak</option>
                                         </select>
                                     </div>
@@ -264,10 +265,17 @@
                                             <input class="form-check-input" type="checkbox" name="borders" value="1" id="borders-check" checked />
                                             <label class="form-check-label" for="borders-check" data-i18n="location-borders">Krawędzie lokacji</label>
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="frameMode" value="1" id="frame-check" />
-                                            <label class="form-check-label" for="frame-check" data-i18n="borders-only"> Pokaż tylko krawędzie </label>
-                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="render-mode" data-i18n="render-mode">Tryb renderowania</label>
+                                        <select class="form-select" id="render-mode" name="renderMode">
+                                            <option value="normal" data-i18n="render-normal">Normalny</option>
+                                            <option value="frame" data-i18n="render-frame">Ramki</option>
+                                            <option value="colored" data-i18n="render-colored">Kolorowy</option>
+                                            <option value="pencil" data-i18n="render-pencil">Ołówek</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" name="emboss" value="0" id="emboss-check" />
                                             <label class="form-check-label" for="emboss-check" data-i18n="emboss-locations"> Wypukłe lokacje </label>
@@ -306,12 +314,6 @@
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" name="transparentLabels" value="1" id="transparentLabels-check" />
-                                        <label class="form-check-label" for="transparentLabels-check" data-i18n="transparent-labels">
-                                            Przezroczyste tło etykiet
-                                        </label>
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="preview" value="1" id="preview-input" />
@@ -451,7 +453,7 @@
             <div id="map"></div>
             <script src="data/mapExport.js"></script>
             <script src="data/colors.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script/dist/index.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.2.0/dist/index.min.js"></script>
             <script src="js/page.js"></script>
         </div>
     </body>
