@@ -142,7 +142,7 @@
                             <h5 class="modal-title" data-i18n="search">Szukaj</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" data-autocomplete-target>
                             <div class="mb-3">
                                 <label class="form-label" for="search-id" data-i18n="search-label">Numer lokacji lub pełne imię adresata paczki:</label>
                                 <input
@@ -150,13 +150,17 @@
                                     type="text"
                                     id="search-id"
                                     name="roomId"
+                                    data-search-input
                                     data-npc="https://delwing.github.io/arkadia-mapa/data/npc.json"
                                     autocomplete="off"
+                                    placeholder=" "
                                 />
+                                <button type="button" class="search-clear" data-clear-input="search-id" title="Wyczyść" aria-label="Clear">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
+                                        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+                                    </svg>
+                                </button>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary" data-i18n="search">Szukaj</button>
                         </div>
                     </form>
                 </div>
@@ -190,7 +194,7 @@
         <div class="modal fade" id="settings" tabindex="-1" role="dialog" data-bs-theme="dark" data-bs-scroll="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form class="settings-form">
+                    <form class="settings-form" data-settings-form>
                         <div class="modal-header">
                             <h5 class="modal-title" data-i18n="settings">Ustawienia</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -264,7 +268,7 @@
                                             <option value="neon" data-i18n="render-neon">Neon</option>
                                         </select>
                                     </div>
-                                    <div class="mb-3" id="iso-rotation-group" style="display:none">
+                                    <div class="mb-3" id="iso-rotation-group" data-iso-rotation-group style="display:none">
                                         <label class="form-label slider-label" for="iso-rotation">
                                             <span data-i18n="iso-rotation">Obrót izometryczny</span>
                                             <output for="iso-rotation"></output>
@@ -440,7 +444,7 @@
             <div id="map"></div>
             <script src="data/mapExport.js"></script>
             <script src="data/colors.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.3.0/dist/index.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.4.0/dist/index.min.js"></script>
         </div>
     </body>
 </html>
