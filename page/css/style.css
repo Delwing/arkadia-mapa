@@ -1107,9 +1107,7 @@ mark {
     top: 100%;
     left: 0;
     right: 0;
-    background: rgba(18, 18, 28, 0.94) !important;
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
+    background: rgba(18, 18, 28, 1) !important;
     border: 1px solid var(--glass-border) !important;
     border-top: none !important;
     border-radius: 0 0 16px 16px !important;
