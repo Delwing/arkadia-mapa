@@ -19,6 +19,9 @@
     --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     --accent: rgba(120, 180, 255, 0.9);
     --toolbar-height: 56px;
+    /* Inset hint to the map renderer so initial fit-to-bounds isn't covered by the floating header.
+       Header is fixed at top:12px with height:56px; add 12px breathing room. */
+    --map-top-inset: calc(var(--toolbar-height) + 24px);
 }
 
 html,
