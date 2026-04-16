@@ -10,7 +10,7 @@
 
 :root {
     --glass-bg: rgba(15, 15, 20, 0.65);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.14);
     --glass-blur: blur(16px) saturate(1.4);
     --radius: 12px;
     --radius-sm: 8px;
