@@ -13,7 +13,7 @@
             gtag("config", "G-CDD74LT5YT");
         </script>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
         <meta name="theme-color" content="#0a0a0f" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -451,6 +451,15 @@
                 </button>
             </div>
             <div id="map"></div>
+            <script>
+                // Prevent iOS Safari page pinch-zoom; the map library handles pinch itself.
+                ["gesturestart", "gesturechange", "gestureend"].forEach(function (evt) {
+                    document.addEventListener(evt, function (e) { e.preventDefault(); }, { passive: false });
+                });
+                document.addEventListener("dblclick", function (e) {
+                    if (e.target.closest(".map-container")) e.preventDefault();
+                }, { passive: false });
+            </script>
             <script src="data/mapExport.js"></script>
             <script src="data/colors.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.8.3/dist/index.min.js"></script>

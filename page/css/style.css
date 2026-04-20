@@ -292,12 +292,16 @@ button.control > span,
     left: 0;
     right: 0;
     bottom: 0;
+    touch-action: none;
+    overscroll-behavior: contain;
 }
 
 #map {
     width: 100%;
     height: 100%;
     transition: background-color 0.4s ease;
+    touch-action: none;
+    overscroll-behavior: contain;
 }
 
 .dragging {
