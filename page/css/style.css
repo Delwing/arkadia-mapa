@@ -37,6 +37,19 @@ body {
     font-size: 14px;
     background: #0a0a0f;
     color: #e0e0e0;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Disable double-tap zoom on interactive UI but keep pinch-zoom on the map */
+header,
+.info-box,
+.path-box,
+.zoom-controls,
+.toasts,
+.modal {
+    touch-action: manipulation;
 }
 
 a {
@@ -1227,20 +1240,306 @@ mark {
     }
 }
 
-@media all and (max-width: 600px) {
+/* ===== Mobile / Touch ===== */
+@media all and (max-width: 768px) {
+    :root {
+        --toolbar-height: auto;
+        --radius: 14px;
+        --radius-sm: 10px;
+    }
+
+    body {
+        font-size: 15px;
+    }
+
+    /* Header stacks and stretches edge-to-edge */
     header {
+        position: fixed;
+        top: calc(8px + env(safe-area-inset-top));
+        left: calc(8px + env(safe-area-inset-left));
+        right: calc(8px + env(safe-area-inset-right));
         height: auto;
+        padding: 8px 10px;
+        gap: 8px;
         flex-wrap: wrap;
-        padding: 8px 12px;
-        gap: 6px;
+        align-items: center;
+        justify-content: flex-start;
     }
 
     .left-header {
         width: 100%;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    h2 {
+        font-size: 16px;
+    }
+
+    h2 span {
+        display: none;
+    }
+
+    .logo {
+        width: 28px;
+        height: 34px;
+    }
+
+    /* Controls stretch full width and wrap */
+    .map-controls {
+        flex: 1 1 100%;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .area-form {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 140px;
     }
 
     .controls {
         width: 100%;
         justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    /* Bigger touch targets (min 44px) */
+    header .btn-secondary,
+    header .btn.btn-secondary,
+    .area-form .form-select {
+        height: 44px;
+        min-width: 44px;
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    .controls .dropdown-toggle-split {
+        min-width: 36px;
+        padding: 8px 10px;
+    }
+
+    .levels-container .btn {
+        height: 40px;
+        min-width: 40px;
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    /* Info box becomes a bottom sheet for much better reach */
+    .info-box {
+        top: auto;
+        bottom: calc(8px + env(safe-area-inset-bottom));
+        left: calc(8px + env(safe-area-inset-left));
+        right: calc(8px + env(safe-area-inset-right));
+        width: auto;
+        max-height: 45vh;
+        padding: 14px 16px;
+        font-size: 14px;
+        transform: translateY(20px);
+    }
+
+    .info-box.visible {
+        transform: translateY(0);
+    }
+
+    /* Path box above info-box / mini */
+    .path-box {
+        width: calc(100vw - 16px);
+        max-width: 360px;
+        bottom: 12px;
+        left: 8px;
+    }
+
+    /* Larger zoom controls */
+    .zoom-controls {
+        bottom: calc(12px + env(safe-area-inset-bottom));
+        right: calc(12px + env(safe-area-inset-right));
+    }
+
+    .zoom-controls .btn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .zoom-controls svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Modal dialogs: full-width sheets with safe spacing */
+    .modal-dialog {
+        margin: 12px;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    .modal-header {
+        padding: 14px 16px;
+    }
+
+    .modal-footer {
+        padding: 12px 16px;
+    }
+
+    .modal .form-control,
+    .modal .form-select {
+        font-size: 16px; /* prevent iOS zoom on focus */
+        min-height: 44px;
+    }
+
+    .modal .form-label {
+        font-size: 13px;
+    }
+
+    .modal .form-check-input {
+        width: 1.25em;
+        height: 1.25em;
+        margin-top: 0.15em;
+    }
+
+    .modal .form-check-label {
+        font-size: 15px;
+        padding-left: 4px;
+    }
+
+    .modal .form-range {
+        height: 2.25rem;
+    }
+
+    .modal .form-range::-webkit-slider-thumb {
+        width: 22px;
+        height: 22px;
+        margin-top: -9px;
+    }
+
+    .modal .form-range::-moz-range-thumb {
+        width: 22px;
+        height: 22px;
+    }
+
+    .modal .btn-close {
+        padding: 14px;
+        background-size: 12px;
+    }
+
+    .modal .btn-primary,
+    .modal .btn-secondary,
+    .modal .btn-light {
+        min-height: 44px;
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+
+    /* Search as full-width sheet from top */
+    #search .modal-dialog {
+        max-width: none;
+        margin: 8vh 12px 0;
+    }
+
+    #search .modal-body .form-control {
+        font-size: 16px;
+        padding: 16px 16px 16px 48px;
+        background-position: 14px center;
+    }
+
+    #search .modal-body label {
+        padding: 10px 16px 0 48px;
+    }
+
+    #search .search-clear {
+        width: 32px;
+        height: 32px;
+        right: 10px;
+        bottom: 14px;
+    }
+
+    /* Findpath: stack vertically on mobile */
+    #findpath .modal-dialog {
+        max-width: none;
+        margin: 8vh 12px 0;
+    }
+
+    #findpath .modal-body {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    /* Settings drawer takes full width on mobile */
+    #settings .modal-dialog {
+        top: 8px;
+        right: 8px;
+        bottom: 8px;
+        width: auto;
+        left: 8px;
+        max-width: none;
+    }
+
+    #settings .row-cols-auto {
+        gap: 16px;
+    }
+
+    /* Help modal */
+    #help .modal-dialog {
+        max-width: none;
+    }
+
+    #help .modal-body p {
+        flex-wrap: wrap;
+        font-size: 14px;
+    }
+
+    /* Minimap hidden on mobile */
+    .preview-container {
+        display: none !important;
+    }
+
+    /* Toasts move to top to avoid overlap with bottom-sheet info box */
+    .toasts {
+        top: auto;
+        bottom: 16px;
+    }
+
+    .toast {
+        min-width: 160px;
+        max-width: calc(100vw - 24px);
+    }
+
+    .toast .toast-body {
+        font-size: 14px;
+        padding: 12px 18px;
+    }
+
+    /* When info-box is open, tuck zoom controls above it */
+    .info-box.visible ~ .zoom-controls {
+        bottom: calc(45vh + 20px);
+    }
+}
+
+/* Very small phones */
+@media all and (max-width: 400px) {
+    header {
+        padding: 6px 8px;
+    }
+
+    .area-form {
+        min-width: 0;
+        flex: 1 1 100%;
+    }
+
+    .levels-container {
+        flex-wrap: wrap;
+    }
+
+    .levels-container .btn-group {
+        flex-wrap: wrap;
+    }
+
+    header .btn-secondary span,
+    header .btn.btn-secondary span {
+        display: none;
     }
 }
