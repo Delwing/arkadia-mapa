@@ -472,9 +472,12 @@
 
                     let syncing = false;
 
+                    const container = levels.closest(".levels-container");
+
                     const rebuild = () => {
                         if (syncing) return;
                         const items = Array.from(levels.querySelectorAll(".btn-level"));
+                        if (container) container.style.display = items.length === 0 ? "none" : "";
                         let active = null;
                         const activeBtn = levels.querySelector(".btn-level.btn-primary, .btn-level.active");
                         if (activeBtn) {
