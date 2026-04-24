@@ -595,7 +595,7 @@ button.control > span,
 
 /* ===== Modal Base ===== */
 .modal {
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
 }
 
 .modal-backdrop {
@@ -906,8 +906,16 @@ button.control > span,
     flex-direction: column;
 }
 
+#settings .settings-form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
 #settings .modal-body {
     flex: 1;
+    min-height: 0;
     overflow-y: auto;
     padding: 16px 20px;
 }
