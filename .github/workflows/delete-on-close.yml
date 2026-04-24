@@ -1,14 +1,13 @@
 name: Remove branch on PR close
 
-on: 
+on:
   pull_request:
     types: [closed]
-    branches: [development]
+    branches: [master]
   workflow_dispatch:
-   repository_dispatch:
+  repository_dispatch:
     types:
       - webhook
-  
 
 jobs:
   map-diff:
