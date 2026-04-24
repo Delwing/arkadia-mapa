@@ -8,7 +8,7 @@ jobs:
     steps:
       - name: Create DIFF
         id: diff
-        uses: Delwing/mudlet-map-diff-action@v10
+        uses: Delwing/mudlet-map-diff-action@v11
         with:
           old-map: map_master3.dat
           reuse-comment: true
