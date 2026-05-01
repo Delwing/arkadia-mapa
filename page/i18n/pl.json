@@ -14,5 +14,9 @@
     "settings-saved": "Ustawienia zapisane",
     "location-not-found" : "Nie znaleziono takiej lokacji",
     "delete": "Usuń",
-    "no-path": "Nie udało się znaleźć ścieżki"
+    "no-path": "Nie udało się znaleźć ścieżki",
+    "filter": "Filtruj…",
+    "no-results": "Brak wyników",
+    "show-controls": "Pokaż narzędzia",
+    "hide-controls": "Ukryj narzędzia"
 }

@@ -37,12 +37,24 @@
                 <div class="map-controls">
                     <form class="area-form">
                         <select class="form-select" id="area"></select>
+                        <div class="area-dropdown" data-area-dropdown>
+                            <button type="button" class="form-select area-dropdown-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                <span class="area-dropdown-value"></span>
+                            </button>
+                            <div class="area-dropdown-popover" hidden>
+                                <div class="area-dropdown-search-wrap">
+                                    <input type="text" class="area-dropdown-search" autocomplete="off" spellcheck="false" data-i18n-placeholder="filter" placeholder="Filtruj…" />
+                                </div>
+                                <ul class="area-dropdown-list" role="listbox"></ul>
+                                <div class="area-dropdown-empty" hidden data-i18n="no-results">Brak wyników</div>
+                            </div>
+                        </div>
                     </form>
                     <span class="levels-container">
                         <span class="control levels btn-group btn-group-toggle"></span>
                         <select class="form-select levels-select" aria-label="Poziom"></select>
                     </span>
-                    <span class="control">
+                    <span class="control control-area-info">
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#area-info">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
                                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
@@ -50,9 +62,14 @@
                               </svg>
                         </button>
                     </span>
+                    <button type="button" class="btn btn-secondary controls-toggle" aria-expanded="false" aria-controls="header-controls" title="Pokaż/ukryj">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down chevron-icon" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
-            <div class="controls flex-wrap btn-toolbar">
+            <div class="controls flex-wrap btn-toolbar" id="header-controls">
                 <button class="control copy-image btn btn-secondary" title="Kopiuj obraz">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-copy" viewBox="0 0 16 16">
                         <path fill-rule="evenodd" d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"/>
@@ -465,6 +482,209 @@
             <script src="data/colors.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/mudlet-map-browser-script@0.8.3/dist/index.min.js"></script>
             <script>
+                // Mobile collapsible header: chevron shows/hides the secondary controls toolbar.
+                (function () {
+                    const headerEl = document.querySelector("header");
+                    const toggle = document.querySelector(".controls-toggle");
+                    if (!headerEl || !toggle) return;
+                    const KEY = "arkadia.mobileControlsCollapsed";
+                    const setCollapsed = (collapsed) => {
+                        headerEl.classList.toggle("controls-collapsed", collapsed);
+                        toggle.setAttribute("aria-expanded", collapsed ? "false" : "true");
+                        try { localStorage.setItem(KEY, collapsed ? "1" : "0"); } catch (e) {}
+                    };
+                    let initial = true;
+                    try {
+                        const v = localStorage.getItem(KEY);
+                        if (v === "0") initial = false;
+                    } catch (e) {}
+                    setCollapsed(initial);
+                    toggle.addEventListener("click", () => {
+                        setCollapsed(!headerEl.classList.contains("controls-collapsed"));
+                    });
+                })();
+
+                // Filterable area picker that mirrors the native <select id="area">.
+                // The native select stays as the source of truth so external code (the map
+                // browser script) keeps populating it and listening to its change event.
+                (function () {
+                    const wrap = document.querySelector("[data-area-dropdown]");
+                    const native = document.getElementById("area");
+                    if (!wrap || !native) return;
+
+                    const trigger = wrap.querySelector(".area-dropdown-trigger");
+                    const valueEl = wrap.querySelector(".area-dropdown-value");
+                    const popover = wrap.querySelector(".area-dropdown-popover");
+                    const search = wrap.querySelector(".area-dropdown-search");
+                    const list = wrap.querySelector(".area-dropdown-list");
+                    const empty = wrap.querySelector(".area-dropdown-empty");
+
+                    let highlighted = -1;
+                    const DIACRITICS_RE = /[̀-ͯ]/g;
+                    const norm = (s) => (s || "").toString().toLowerCase().normalize("NFKD").replace(DIACRITICS_RE, "");
+
+                    const collectOptions = () =>
+                        Array.from(native.options).map((opt) => ({ value: opt.value, label: (opt.textContent || "").trim() }));
+
+                    const syncTrigger = () => {
+                        const sel = native.options[native.selectedIndex];
+                        valueEl.textContent = sel ? (sel.textContent || "").trim() : "";
+                    };
+
+                    const renderOptions = () => {
+                        const q = norm(search.value.trim());
+                        const items = collectOptions();
+                        const filtered = q ? items.filter((it) => norm(it.label).includes(q)) : items;
+                        list.innerHTML = "";
+                        empty.hidden = filtered.length > 0;
+                        const selectedValue = native.value;
+                        let active = filtered.findIndex((it) => it.value === selectedValue);
+                        if (active < 0 && filtered.length > 0) active = 0;
+                        highlighted = active;
+                        filtered.forEach((it, i) => {
+                            const li = document.createElement("li");
+                            li.className = "area-dropdown-item";
+                            li.setAttribute("role", "option");
+                            li.dataset.value = it.value;
+                            li.textContent = it.label;
+                            if (it.value === selectedValue) li.classList.add("selected");
+                            if (i === highlighted) li.classList.add("highlighted");
+                            li.addEventListener("mouseenter", () => {
+                                highlighted = i;
+                                refreshHighlight(false);
+                            });
+                            li.addEventListener("click", () => commit(it.value));
+                            list.appendChild(li);
+                        });
+                        scrollHighlightIntoView("nearest");
+                    };
+
+                    const refreshHighlight = (scroll) => {
+                        Array.from(list.children).forEach((li, i) => {
+                            li.classList.toggle("highlighted", i === highlighted);
+                        });
+                        if (scroll) scrollHighlightIntoView("nearest");
+                    };
+
+                    const scrollHighlightIntoView = (block) => {
+                        if (highlighted < 0) return;
+                        const li = list.children[highlighted];
+                        if (li && typeof li.scrollIntoView === "function") li.scrollIntoView({ block: block || "nearest" });
+                    };
+
+                    const commit = (val) => {
+                        if (native.value !== val) {
+                            native.value = val;
+                            native.dispatchEvent(new Event("change", { bubbles: true }));
+                        }
+                        syncTrigger();
+                        close();
+                        trigger.focus();
+                    };
+
+                    const isOpen = () => wrap.classList.contains("open");
+                    const open = () => {
+                        wrap.classList.add("open");
+                        trigger.setAttribute("aria-expanded", "true");
+                        popover.hidden = false;
+                        search.value = "";
+                        renderOptions();
+                        scrollHighlightIntoView("center");
+                        setTimeout(() => search.focus(), 0);
+                    };
+                    const close = () => {
+                        wrap.classList.remove("open");
+                        trigger.setAttribute("aria-expanded", "false");
+                        popover.hidden = true;
+                    };
+
+                    trigger.addEventListener("click", () => (isOpen() ? close() : open()));
+
+                    trigger.addEventListener("keydown", (e) => {
+                        if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+                            e.preventDefault();
+                            if (!isOpen()) open();
+                        }
+                    });
+
+                    search.addEventListener("input", renderOptions);
+
+                    search.addEventListener("keydown", (e) => {
+                        if (e.key === "Escape") {
+                            e.preventDefault();
+                            close();
+                            trigger.focus();
+                        } else if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            const n = list.children.length;
+                            if (n > 0) {
+                                highlighted = Math.min(n - 1, highlighted + 1);
+                                refreshHighlight(true);
+                            }
+                        } else if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            const n = list.children.length;
+                            if (n > 0) {
+                                highlighted = Math.max(0, highlighted - 1);
+                                refreshHighlight(true);
+                            }
+                        } else if (e.key === "Home") {
+                            e.preventDefault();
+                            if (list.children.length > 0) {
+                                highlighted = 0;
+                                refreshHighlight(true);
+                            }
+                        } else if (e.key === "End") {
+                            e.preventDefault();
+                            const n = list.children.length;
+                            if (n > 0) {
+                                highlighted = n - 1;
+                                refreshHighlight(true);
+                            }
+                        } else if (e.key === "Enter") {
+                            e.preventDefault();
+                            const li = list.children[highlighted];
+                            if (li) commit(li.dataset.value);
+                        }
+                    });
+
+                    document.addEventListener("click", (e) => {
+                        if (!isOpen()) return;
+                        if (!wrap.contains(e.target)) close();
+                    });
+
+                    new MutationObserver(() => {
+                        syncTrigger();
+                        if (isOpen()) renderOptions();
+                    }).observe(native, { childList: true, subtree: true, characterData: true });
+
+                    native.addEventListener("change", () => {
+                        syncTrigger();
+                        if (isOpen()) renderOptions();
+                    });
+
+                    // Translate placeholder + empty-state when the page language changes.
+                    // Uses a small embedded dictionary so it works regardless of whether the
+                    // external i18n bundle handles data-i18n-placeholder.
+                    const I18N = {
+                        pl: { filter: "Filtruj…", "no-results": "Brak wyników" },
+                        en: { filter: "Filter…", "no-results": "No results" },
+                    };
+                    const applyI18n = () => {
+                        const lang = (document.documentElement.lang || "pl").toLowerCase();
+                        const dict = I18N[lang] || I18N.pl;
+                        if (dict.filter) search.placeholder = dict.filter;
+                        if (dict["no-results"]) empty.textContent = dict["no-results"];
+                    };
+                    applyI18n();
+                    new MutationObserver(applyI18n).observe(document.documentElement, {
+                        attributes: true,
+                        attributeFilter: ["lang"],
+                    });
+
+                    syncTrigger();
+                })();
+
                 (function () {
                     const levels = document.querySelector(".levels");
                     const select = document.querySelector(".levels-select");

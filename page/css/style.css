@@ -130,6 +130,7 @@ h2 a:hover {
 
 .area-form {
     width: 180px;
+    position: relative;
 }
 
 .area-form .form-select {
@@ -151,6 +152,162 @@ h2 a:hover {
 .area-form .form-select option {
     background: #1a1a24;
     color: #e0e0e0;
+}
+
+/* Hide native select; the filterable .area-dropdown drives selection visually
+   while the native element remains the source of truth for external scripts. */
+.area-form > #area {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.area-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.area-dropdown-trigger {
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding-right: 32px;
+}
+
+.area-dropdown-value {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.area-dropdown.open .area-dropdown-trigger {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(120, 180, 255, 0.15);
+}
+
+.area-dropdown-popover {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 100%;
+    width: max-content;
+    max-width: min(420px, calc(100vw - 24px));
+    z-index: 110;
+    background: rgba(18, 18, 28, 0.96);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    max-height: min(60vh, 360px);
+}
+
+.area-dropdown-popover[hidden] {
+    display: none;
+}
+
+.area-dropdown-search-wrap {
+    padding: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.area-dropdown-search {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #e0e0e0;
+    font-size: 13px;
+    padding: 6px 10px;
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.area-dropdown-search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(120, 180, 255, 0.15);
+}
+
+.area-dropdown-search::placeholder {
+    color: #6a7588;
+}
+
+.area-dropdown-list {
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.area-dropdown-list::-webkit-scrollbar {
+    width: 4px;
+}
+.area-dropdown-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+}
+
+.area-dropdown-item {
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: #c8d0dc;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background var(--transition), color var(--transition);
+}
+
+.area-dropdown-item.highlighted {
+    background: rgba(120, 180, 255, 0.18);
+    color: #fff;
+}
+
+.area-dropdown-item.selected {
+    color: var(--accent);
+}
+
+.area-dropdown-item.selected.highlighted {
+    background: rgba(120, 180, 255, 0.28);
+    color: #fff;
+}
+
+.area-dropdown-empty {
+    padding: 12px;
+    text-align: center;
+    font-size: 12px;
+    color: #6a7588;
+}
+
+/* Chevron toggle for mobile collapsible header. Hidden on desktop. */
+.controls-toggle {
+    display: none;
+}
+
+.controls-toggle .chevron-icon {
+    transition: transform var(--transition);
+}
+
+header.controls-collapsed .controls-toggle .chevron-icon {
+    transform: rotate(-180deg);
 }
 
 /* Dark select dropdowns globally */
@@ -1317,12 +1474,41 @@ mark {
         flex-wrap: wrap;
         gap: 6px;
         justify-content: flex-end;
+        align-items: center;
     }
 
     .area-form {
         flex: 1 1 120px;
         width: auto;
         min-width: 0;
+    }
+
+    /* Show chevron toggle on mobile */
+    .controls-toggle {
+        display: inline-flex;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    /* When collapsed, hide the area-info button and the secondary controls toolbar */
+    header.controls-collapsed .control-area-info,
+    header.controls-collapsed .controls {
+        display: none !important;
+    }
+
+    /* Larger touch target for the area dropdown trigger and prevent iOS zoom on the search input */
+    .area-dropdown-trigger {
+        height: 44px;
+        font-size: 14px;
+    }
+
+    .area-dropdown-search {
+        font-size: 16px;
+        min-height: 38px;
+    }
+
+    .area-dropdown-popover {
+        max-width: calc(100vw - 24px);
     }
 
     /* Swap level buttons for a native select on mobile */

@@ -90,5 +90,9 @@
     "label-data": "Data",
     "label-data-transparent": "Data (transparent)",
     "label-none": "None",
-    "grid": "Grid"
+    "grid": "Grid",
+    "filter": "Filter…",
+    "no-results": "No results",
+    "show-controls": "Show controls",
+    "hide-controls": "Hide controls"
 }
