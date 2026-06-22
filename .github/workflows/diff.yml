@@ -11,7 +11,7 @@ jobs:
         uses: Delwing/mudlet-map-diff-action@v13
         with:
           old-map: map_master3.dat
-          reuse-comment: true
+          reuse-comment: false
         env:
           CLOUDINARY_NAME: ${{ secrets.CLOUDINARY_NAME }}
           CLOUDINARY_KEY: ${{ secrets.CLOUDINARY_KEY }}
