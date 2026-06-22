@@ -21,6 +21,34 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: yarn --cwd action
+      - name: Download previous map
+        continue-on-error: true
+        run: gh release download --pattern map_master3.dat --output old_map.dat --clobber
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Capture commit author
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "COMMIT_TIMESTAMP=$(git log -1 --format=%cI)" >> $GITHUB_ENV
+          # Real author = the PR author. Squash-merge stamps the *merger* as the
+          # commit's git author, so resolve the pull request first and only fall
+          # back to the commit author for direct pushes (no PR).
+          LOGIN=$(gh api repos/${{ github.repository }}/commits/${{ github.sha }}/pulls --jq '.[0].user.login // empty')
+          if [ -z "$LOGIN" ]; then
+            LOGIN=$(gh api repos/${{ github.repository }}/commits/${{ github.sha }} --jq '.author.login // empty')
+          fi
+          if [ -n "$LOGIN" ]; then
+            NAME=$(gh api users/"$LOGIN" --jq '.name // empty')
+            EMAIL=$(gh api users/"$LOGIN" --jq '.email // empty')
+            [ -z "$NAME" ] && NAME="$LOGIN"
+          else
+            NAME=$(git log -1 --format=%an)
+            EMAIL=$(git log -1 --format=%ae)
+          fi
+          echo "GIT_AUTHOR_LOGIN=$LOGIN" >> $GITHUB_ENV
+          echo "GIT_AUTHOR_NAME=$NAME" >> $GITHUB_ENV
+          echo "GIT_AUTHOR_EMAIL=$EMAIL" >> $GITHUB_ENV
       - id: release
         name: Bump version and release
         uses: rymndhng/release-on-push-action@master
@@ -59,4 +87,9 @@ jobs:
           file_glob: true
           tag: ${{ steps.release.outputs.tag_name }}
           overwrite: true
-      
+      - name: Store change history
+        run: node action/store-diff.mjs ${{ steps.release.outputs.tag_name }}
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_ACTOR: ${{ github.actor }}

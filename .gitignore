@@ -1,6 +1,7 @@
 node_modules
 colors.*
 mapExport.*
+old_map.dat
 bundle.js
 .idea
 .claude
