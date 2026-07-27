@@ -5,6 +5,7 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
+# id-token can't be self-granted by the reusable workflow — it has to be declared here.
 permissions:
   contents: read
   pages: write
@@ -15,22 +16,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - run: yarn --cwd action
-      - run: node action/page.js
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './page'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+  pages:
+    uses: Delwing/mudlet-map-page/.github/workflows/deploy-pages.yml@v1
+    with:
+      map-file: map_master3.dat
+      version: "1.0.0"
+      lang: pl
+      # Sets the document <title>; MAP_CONFIG.title is replaced by the per-language
+      # object in extra-config below.
+      title: Mapa Arkadii
+      logo: page/images/logo.png
+      npc-url: page/data/npc.json
+      favicon: page/favicon.ico
+      # title and credits.remark are per-language objects, which the plain-string
+      # `title`/`credits-*` inputs can't express — extra-config is merged in last.
+      extra-config: |
+        {
+          "title": { "pl": "Mapa Arkadii", "en": "Arkadia Map" },
+          "credits": {
+            "author": "Dargoth",
+            "githubUrl": "https://github.com/Delwing/mudlet-map-reader",
+            "remark": {
+              "pl": "Mapa powstała przy współpracy wielu osób ze społeczności Arkadii w projekcie <b>dzordzyka</b>",
+              "en": "Map was created by many authors from Arkadia's communities in project under lead of <b>dzordzyk</b>"
+            }
+          }
+        }
+      # Adds the Google Analytics tag; the action's inputs don't cover analytics.
+      html-transform: action/page-transform.mjs
