@@ -20,7 +20,8 @@ jobs:
     uses: Delwing/mudlet-map-page/.github/workflows/deploy-pages.yml@v1
     with:
       map-file: map_master3.dat
-      version: "1.0.0"
+      # Track the latest 1.x bundle from jsDelivr rather than pinning a patch.
+      version: "1"
       lang: pl
       # Sets the document <title>; MAP_CONFIG.title is replaced by the per-language
       # object in extra-config below.
