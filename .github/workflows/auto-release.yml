@@ -87,6 +87,16 @@ jobs:
           file_glob: true
           tag: ${{ steps.release.outputs.tag_name }}
           overwrite: true
+      # npc.json used to sit in page/data and ride along with the glob above; it now
+      # lives at the repo root so the Pages site serves it from /data/npc.json.
+      - name: Upload NPC list to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: data/npc.json
+          asset_name: npc.json
+          tag: ${{ steps.release.outputs.tag_name }}
+          overwrite: true
       - name: Store change history
         run: node action/store-diff.mjs ${{ steps.release.outputs.tag_name }}
         env:

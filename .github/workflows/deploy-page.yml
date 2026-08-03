@@ -27,7 +27,9 @@ jobs:
       # object in extra-config below.
       title: Mapa Arkadii
       logo: page/images/logo.png
-      npc-url: page/data/npc.json
+      # Path-valued inputs are published at the same relative path, so keeping this at
+      # the repo root preserves the site's historical /data/npc.json URL.
+      npc-url: data/npc.json
       favicon: page/favicon.ico
       # title and credits.remark are per-language objects, which the plain-string
       # `title`/`credits-*` inputs can't express — extra-config is merged in last.
