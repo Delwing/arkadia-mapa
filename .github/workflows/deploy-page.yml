@@ -33,9 +33,13 @@ jobs:
       favicon: page/favicon.ico
       # title and credits.remark are per-language objects, which the plain-string
       # `title`/`credits-*` inputs can't express — extra-config is merged in last.
+      # versionsTagsUrl/versionsFilesUrl have no dedicated inputs either; without them
+      # the bundle hides the "switch map version" selector in the Help modal.
       extra-config: |
         {
           "title": { "pl": "Mapa Arkadii", "en": "Arkadia Map" },
+          "versionsTagsUrl": "https://api.github.com/repos/Delwing/arkadia-mapa/releases?per_page=200",
+          "versionsFilesUrl": "https://arkadia-mapa.delwing.workers.dev/?tag=%tag%",
           "credits": {
             "author": "Dargoth",
             "githubUrl": "https://github.com/Delwing/mudlet-map-reader",
